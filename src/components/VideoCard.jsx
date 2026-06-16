@@ -69,7 +69,7 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
 
   useEffect(() => () => clearHoverTimer(), []);
 
-  const mediaAspect = variant === "featured" ? "21 / 9" : "16 / 9";
+  const featuredAspect = variant === "featured" ? "21 / 9" : null;
 
   const driveIframeSrc =
     isDrive && previewActive
@@ -86,13 +86,16 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
   return (
     <article
       ref={rootRef}
-      className={`video-card ${variant === "featured" ? "video-card--featured" : ""}`}
+      className={`video-card ${variant === "featured" ? "video-card--featured" : ""} ${variant === "grid" ? "video-card--grid" : ""}`}
       onFocusCapture={() => setFocusWithin(true)}
       onBlurCapture={(e) => {
         if (!rootRef.current?.contains(e.relatedTarget)) setFocusWithin(false);
       }}
     >
-      <div className="video-card__media" style={{ aspectRatio: mediaAspect }}>
+      <div
+        className="video-card__media"
+        style={featuredAspect ? { aspectRatio: featuredAspect } : undefined}
+      >
         {isDrive ? (
           <>
             {driveIframeSrc ? (
@@ -163,6 +166,19 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
       />
 
       <style>{`
+        .video-card--grid {
+          flex: 1 1 auto;
+          display: flex;
+          flex-direction: column;
+          min-height: 0;
+        }
+        .video-card--grid .video-card__media {
+          flex: 1 1 auto;
+          min-height: 11rem;
+        }
+        .video-card--grid .video-card__body {
+          flex-shrink: 0;
+        }
         .video-card {
           position: relative;
           border-radius: var(--radius-lg);

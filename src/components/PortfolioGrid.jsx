@@ -28,9 +28,15 @@ export function PortfolioGrid({ projects, onOpenProject }) {
         .portfolio-grid {
           display: grid;
           grid-template-columns: 1fr;
+          align-items: stretch;
           gap: clamp(1.25rem, 3vw, 2rem);
           margin-top: var(--space-8);
           padding-bottom: var(--space-4);
+        }
+        .portfolio-grid__cell {
+          display: flex;
+          flex-direction: column;
+          min-height: 0;
         }
         @media (min-width: 720px) {
           .portfolio-grid {
@@ -45,9 +51,6 @@ export function PortfolioGrid({ projects, onOpenProject }) {
           }
           .portfolio-grid__cell:nth-child(6n + 1) {
             grid-column: span 2;
-          }
-          .portfolio-grid__cell:nth-child(6n + 1) .video-card__media {
-            aspect-ratio: 16 / 9;
           }
         }
       `}</style>
