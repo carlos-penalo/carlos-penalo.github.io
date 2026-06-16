@@ -1,20 +1,27 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Clapperboard, Menu, X } from "lucide-react";
 import { siteConfig } from "@/config/siteConfig.js";
 
 function scrollToHash(hash) {
   const id = hash.replace("#", "");
-  const el = document.getElementById(id);
-  el?.scrollIntoView({ behavior: "smooth", block: "start" });
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 export function Navbar() {
   const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const panelRef = useRef(null);
   const firstLinkRef = useRef(null);
   const { nav } = siteConfig;
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 32);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -60,7 +67,7 @@ export function Navbar() {
       key={href}
       href={href}
       ref={refFirst ? firstLinkRef : undefined}
-      className="nav-link"
+      className="rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors duration-300 hover:bg-white/[0.06] hover:text-fg"
       onClick={(e) => {
         e.preventDefault();
         scrollToHash(href);
@@ -72,57 +79,70 @@ export function Navbar() {
   );
 
   return (
-    <header className="nav-header">
-      <div className="container nav-inner glass">
-        <a
-          className="wordmark"
-          href="#top"
-          onClick={(e) => {
-            e.preventDefault();
-            window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
-            closeMenu();
-          }}
+    <header className="sticky top-0 z-[1000] px-4 pt-4 md:px-6">
+      <div className="mx-auto w-full max-w-[680px]">
+        <div
+          className={`flex items-center justify-between gap-3 rounded-full border border-white/10 bg-black/55 px-3 shadow-card backdrop-blur-xl transition-all duration-300 md:px-4 ${
+            scrolled ? "min-h-[56px] py-2" : "min-h-[68px] py-2.5"
+          }`}
         >
-          <span className="wordmark__name">{siteConfig.name}</span>
-          <span className="wordmark__role">{siteConfig.role}</span>
-        </a>
-
-        <nav className="nav-desktop" aria-label="Primary">
-          {nav.links.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="nav-link"
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToHash(l.href);
-              }}
-            >
-              {l.label}
-            </a>
-          ))}
           <a
-            className="btn btn--primary nav-cta"
-            href={nav.cta.href}
+            className="flex min-w-0 items-center gap-3"
+            href="#top"
             onClick={(e) => {
               e.preventDefault();
-              scrollToHash(nav.cta.href);
+              window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+              closeMenu();
             }}
           >
-            {nav.cta.label}
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-white shadow-[0_0_24px_rgba(255,23,23,0.35)]">
+              <Clapperboard className="h-5 w-5" aria-hidden />
+            </span>
+            <span className="flex min-w-0 flex-col leading-tight">
+              <span className="truncate font-semibold tracking-tight text-fg">{siteConfig.name}</span>
+              <span className="truncate text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
+                {siteConfig.role}
+              </span>
+            </span>
           </a>
-        </nav>
 
-        <button
-          type="button"
-          className="nav-burger"
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
+          <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
+            {nav.links.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                className="rounded-full px-3 py-2 text-sm font-semibold text-muted transition-colors duration-300 hover:text-fg"
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToHash(l.href);
+                }}
+              >
+                {l.label}
+              </a>
+            ))}
+            <a
+              className="ml-1 inline-flex items-center justify-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-[0_0_32px_rgba(255,23,23,0.25)] transition duration-300 hover:scale-[1.04] hover:shadow-[0_0_44px_rgba(255,23,23,0.4)]"
+              href={nav.cta.href}
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToHash(nav.cta.href);
+              }}
+            >
+              {nav.cta.label}
+            </a>
+          </nav>
+
+          <button
+            type="button"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/[0.04] text-fg transition hover:border-white/25 hover:bg-white/[0.07] md:hidden"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -130,7 +150,7 @@ export function Navbar() {
           <motion.div
             id="mobile-menu"
             ref={panelRef}
-            className="nav-mobile-panel glass"
+            className="mx-4 mt-3 rounded-3xl border border-white/10 bg-black/70 p-4 shadow-card backdrop-blur-xl md:hidden"
             role="dialog"
             aria-modal="true"
             aria-label="Mobile navigation"
@@ -139,10 +159,10 @@ export function Navbar() {
             exit={reduce ? false : { opacity: 0, y: -8 }}
             transition={{ duration: reduce ? 0 : 0.22 }}
           >
-            <div className="nav-mobile-links">
+            <div className="flex flex-col gap-1">
               {nav.links.map((l, i) => navLink(l.href, l.label, i === 0))}
               <a
-                className="btn btn--primary nav-mobile-cta"
+                className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-accent py-3 text-sm font-semibold text-white"
                 href={nav.cta.href}
                 onClick={(e) => {
                   e.preventDefault();
@@ -156,110 +176,6 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <style>{`
-        .nav-header {
-          position: sticky;
-          top: 0;
-          z-index: 1000;
-          padding: var(--space-4) var(--space-4) 0;
-        }
-        .nav-inner {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: var(--space-4);
-          padding: var(--space-3) var(--space-4);
-          border-radius: var(--radius-lg);
-          box-shadow: var(--shadow-soft);
-        }
-        .wordmark {
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-          min-width: 0;
-        }
-        .wordmark__name {
-          font-weight: 700;
-          letter-spacing: -0.02em;
-          font-size: var(--text-sm);
-          white-space: nowrap;
-        }
-        .wordmark__role {
-          font-size: var(--text-xs);
-          color: var(--text-subtle);
-          letter-spacing: 0.04em;
-          text-transform: uppercase;
-        }
-        .nav-desktop {
-          display: none;
-          align-items: center;
-          gap: var(--space-4);
-        }
-        @media (min-width: 960px) {
-          .nav-desktop {
-            display: flex;
-          }
-          .nav-burger {
-            display: none;
-          }
-        }
-        .nav-link {
-          font-size: var(--text-sm);
-          color: var(--text-muted);
-          padding: var(--space-2) var(--space-2);
-          border-radius: var(--radius-sm);
-          transition: color var(--transition-fast), background var(--transition-fast);
-        }
-        .nav-link:hover {
-          color: var(--text);
-          background: rgba(255, 255, 255, 0.06);
-        }
-        .nav-cta {
-          padding-inline: var(--space-5);
-          text-transform: capitalize;
-        }
-        .nav-burger {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 44px;
-          height: 44px;
-          border-radius: 12px;
-          border: 1px solid var(--border);
-          background: rgba(255, 255, 255, 0.04);
-          color: var(--text);
-          cursor: pointer;
-        }
-        .nav-burger:hover {
-          border-color: var(--border-strong);
-          background: rgba(255, 255, 255, 0.07);
-        }
-        .nav-mobile-panel {
-          margin: var(--space-3) var(--space-4) 0;
-          border-radius: var(--radius-lg);
-          padding: var(--space-4);
-          border: 1px solid var(--border);
-        }
-        @media (min-width: 960px) {
-          .nav-mobile-panel {
-            display: none;
-          }
-        }
-        .nav-mobile-links {
-          display: flex;
-          flex-direction: column;
-          gap: var(--space-2);
-        }
-        .nav-mobile-links .nav-link {
-          padding: var(--space-3) var(--space-3);
-        }
-        .nav-mobile-cta {
-          margin-top: var(--space-2);
-          width: 100%;
-          text-transform: capitalize;
-        }
-      `}</style>
     </header>
   );
 }

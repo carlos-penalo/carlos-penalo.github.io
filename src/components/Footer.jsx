@@ -1,109 +1,96 @@
-import { ArrowUp } from "lucide-react";
+import { Clapperboard } from "lucide-react";
 import { siteConfig } from "@/config/siteConfig.js";
+
+function scrollToHash(hash) {
+  const id = hash.replace("#", "");
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
 export function Footer() {
   const year = new Date().getFullYear();
-
-  const showInstagram = Boolean(siteConfig.contact.instagramUrl?.trim());
-  const phone = typeof siteConfig.contact.phone === "string" ? siteConfig.contact.phone.trim() : "";
+  const { nav, contact, footerTagline } = siteConfig;
+  const showInstagram = Boolean(contact.instagramUrl?.trim());
+  const showYoutube = Boolean(contact.youtubeUrl?.trim());
+  const phone = typeof contact.phone === "string" ? contact.phone.trim() : "";
   const phoneTel = phone ? `tel:+${phone.replace(/\D/g, "")}` : "";
 
   return (
-    <footer className="footer">
-      <div className="container footer-inner">
-        <div>
-          <p className="footer-name">{siteConfig.name}</p>
-          <p className="footer-role">{siteConfig.role}</p>
+    <footer className="border-t border-white/10 bg-black/40 px-4 py-16 md:px-6">
+      <div className="mx-auto flex max-w-[1200px] flex-col gap-12 md:flex-row md:items-start md:justify-between">
+        <div className="max-w-md">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-white">
+              <Clapperboard className="h-5 w-5" aria-hidden />
+            </span>
+            <div>
+              <p className="m-0 font-semibold tracking-tight text-fg">{siteConfig.name}</p>
+              <p className="m-0 text-xs font-semibold uppercase tracking-[0.18em] text-muted">{siteConfig.role}</p>
+            </div>
+          </div>
+          <p className="mt-5 text-sm leading-relaxed text-muted">{footerTagline}</p>
         </div>
-        <div className="footer-links">
-          <a href={siteConfig.contact.linkedinUrl} target="_blank" rel="noreferrer">
+
+        <nav className="flex flex-col gap-2 text-sm font-semibold text-muted" aria-label="Footer">
+          {nav.links.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="w-fit transition hover:text-fg"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToHash(l.href);
+              }}
+            >
+              {l.label}
+            </a>
+          ))}
+          <a
+            href={nav.cta.href}
+            className="w-fit text-accent transition hover:text-fg"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToHash(nav.cta.href);
+            }}
+          >
+            {nav.cta.label}
+          </a>
+        </nav>
+
+        <div className="flex flex-col gap-3 text-sm text-muted">
+          <a href={contact.linkedinUrl} className="w-fit transition hover:text-fg" target="_blank" rel="noreferrer">
             LinkedIn
           </a>
+          {showYoutube ? (
+            <a href={contact.youtubeUrl} className="w-fit transition hover:text-fg" target="_blank" rel="noreferrer">
+              YouTube
+            </a>
+          ) : null}
           {showInstagram ? (
-            <a href={siteConfig.contact.instagramUrl} target="_blank" rel="noreferrer">
+            <a href={contact.instagramUrl} className="w-fit transition hover:text-fg" target="_blank" rel="noreferrer">
               Instagram
             </a>
           ) : null}
-          <a href={`mailto:${siteConfig.contact.email}`}>Email</a>
+          <a href={`mailto:${contact.email}`} className="w-fit transition hover:text-fg">
+            {contact.email}
+          </a>
           {phoneTel ? (
-            <a href={phoneTel}>
+            <a href={phoneTel} className="w-fit transition hover:text-fg">
               {phone}
             </a>
           ) : null}
         </div>
-        <div className="footer-meta">
-          <span>© {year}</span>
-          <button type="button" className="to-top" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-            <ArrowUp size={18} aria-hidden />
-            Back to top
-          </button>
-        </div>
       </div>
-      <style>{`
-        .footer {
-          padding: var(--space-12) 0 var(--space-10);
-          border-top: 1px solid var(--border);
-          background: rgba(0, 0, 0, 0.35);
-        }
-        .footer-inner {
-          display: grid;
-          gap: var(--space-6);
-        }
-        @media (min-width: 900px) {
-          .footer-inner {
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-          }
-        }
-        .footer-name {
-          margin: 0;
-          font-weight: 700;
-        }
-        .footer-role {
-          margin: var(--space-2) 0 0;
-          color: var(--text-muted);
-          font-size: var(--text-sm);
-        }
-        .footer-links {
-          display: flex;
-          flex-wrap: wrap;
-          gap: var(--space-4);
-          font-size: var(--text-sm);
-          color: var(--text-muted);
-        }
-        .footer-links a:hover {
-          color: var(--text);
-        }
-        .footer-meta {
-          display: flex;
-          flex-wrap: wrap;
-          gap: var(--space-4);
-          align-items: center;
-          color: var(--text-subtle);
-          font-size: var(--text-sm);
-        }
-        @media (min-width: 900px) {
-          .footer-meta {
-            justify-self: end;
-          }
-        }
-        .to-top {
-          display: inline-flex;
-          align-items: center;
-          gap: var(--space-2);
-          border: 1px solid var(--border);
-          background: rgba(255, 255, 255, 0.04);
-          color: var(--text);
-          border-radius: 999px;
-          padding: 8px 14px;
-          font: inherit;
-          font-size: var(--text-sm);
-          cursor: pointer;
-        }
-        .to-top:hover {
-          border-color: var(--border-strong);
-        }
-      `}</style>
+
+      <div className="mx-auto mt-12 flex max-w-[1200px] flex-col items-start justify-between gap-4 border-t border-white/10 pt-8 text-sm text-muted md:flex-row md:items-center">
+        <span>© {year} {siteConfig.name}. All rights reserved.</span>
+        <button
+          type="button"
+          className="rounded-full border border-white/12 px-4 py-2 text-sm font-semibold text-fg transition hover:border-white/25"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          Back to top
+        </button>
+      </div>
     </footer>
   );
 }

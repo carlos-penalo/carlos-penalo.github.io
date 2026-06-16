@@ -5,90 +5,45 @@ export function About() {
   const reduce = useReducedMotion();
 
   return (
-    <section id="about" className="section about">
-      <div className="container about-grid">
+    <section id="about" className="scroll-mt-28 px-4 py-20 md:px-6 md:py-28">
+      <div className="mx-auto grid max-w-[1200px] items-start gap-12 lg:grid-cols-[1.35fr_0.75fr]">
         <motion.div
-          initial={reduce ? false : { opacity: 0, y: 14 }}
+          initial={reduce ? false : { opacity: 0, y: 16 }}
           whileInView={reduce ? false : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
           transition={{ duration: reduce ? 0 : 0.45 }}
         >
-          <p className="eyebrow">{siteConfig.about.eyebrow}</p>
-          <h2 className="section-title">{siteConfig.about.title}</h2>
-          <p className="lead">{siteConfig.about.intro}</p>
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">{siteConfig.about.eyebrow}</p>
+          <h2 className="font-medium tracking-tight text-fg text-[clamp(2rem,4vw,3rem)] leading-tight">{siteConfig.about.title}</h2>
+          <p className="mt-6 max-w-[65ch] text-xl leading-relaxed text-muted">{siteConfig.about.intro}</p>
           {siteConfig.about.body.map((para, idx) => (
-            <p key={idx} className="para">
+            <p key={idx} className="mt-4 max-w-[70ch] leading-relaxed text-muted">
               {para}
             </p>
           ))}
         </motion.div>
 
         <motion.aside
-          className="about-aside glass"
-          initial={reduce ? false : { opacity: 0, y: 14 }}
+          className="rounded-3xl border border-white/10 bg-card/90 p-6 shadow-card backdrop-blur-md"
+          initial={reduce ? false : { opacity: 0, y: 16 }}
           whileInView={reduce ? false : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
           transition={{ duration: reduce ? 0 : 0.45, delay: reduce ? 0 : 0.06 }}
           aria-label="Focus areas"
         >
-          <h3 className="aside-title">Where I lean in</h3>
-          <ul className="skill-list">
+          <h3 className="m-0 text-base font-medium text-fg">Where I lean in</h3>
+          <ul className="mt-4 flex list-none flex-col gap-2 p-0">
             {siteConfig.about.skills.map((s) => (
-              <li key={s} className="skill-pill">
+              <li
+                key={s}
+                className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-muted"
+              >
                 {s}
               </li>
             ))}
           </ul>
         </motion.aside>
       </div>
-      <style>{`
-        .about-grid {
-          display: grid;
-          gap: var(--space-10);
-          align-items: start;
-        }
-        @media (min-width: 960px) {
-          .about-grid {
-            grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.75fr);
-          }
-        }
-        .lead {
-          font-size: var(--text-lg);
-          color: var(--text-muted);
-          margin: 0 0 var(--space-4);
-          max-width: 65ch;
-        }
-        .para {
-          margin: 0 0 var(--space-4);
-          color: var(--text-muted);
-          max-width: 70ch;
-        }
-        .about-aside {
-          border-radius: var(--radius-lg);
-          padding: var(--space-6);
-          border: 1px solid var(--border);
-        }
-        .aside-title {
-          margin: 0 0 var(--space-4);
-          font-size: var(--text-base);
-        }
-        .skill-list {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-          display: flex;
-          flex-direction: column;
-          gap: var(--space-2);
-        }
-        .skill-pill {
-          padding: var(--space-3) var(--space-4);
-          border-radius: var(--radius-md);
-          border: 1px solid var(--border);
-          background: rgba(255, 255, 255, 0.03);
-          color: var(--text-muted);
-          font-size: var(--text-sm);
-        }
-      `}</style>
     </section>
   );
 }

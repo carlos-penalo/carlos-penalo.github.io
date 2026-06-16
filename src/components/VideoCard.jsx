@@ -1,8 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
+import { BadgeCheck } from "lucide-react";
 import { usePreviewVideo } from "@/context/PreviewVideoContext.jsx";
 import { useHoverCapable } from "@/hooks/useHoverCapable.js";
 import { driveFilePreviewUrl, driveThumbnailUrl } from "@/lib/googleDrive.js";
+
+function initialsFromTitle(title) {
+  const parts = String(title || "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase().slice(0, 2);
+  return String(title || "CP")
+    .replace(/[^a-zA-Z0-9]/g, "")
+    .slice(0, 2)
+    .toUpperCase() || "CP";
+}
 
 export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnly = false }) {
   const reduce = useReducedMotion();
@@ -24,16 +37,8 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
     (typeof project.poster === "string" && project.poster.trim()) ||
     (project.googleDriveFileId ? driveThumbnailUrl(project.googleDriveFileId, 1200) : "");
 
-  /**
-   * Drive motion preview:
-   * - Featured row: play as soon as the card is in view (desktop + mobile), with loop hint.
-   * - Portfolio grid: in view on touch; on desktop also needs hover/focus (limits many iframes).
-   */
   const wantDriveEmbed =
-    isDrive &&
-    inView &&
-    !reduce &&
-    (variant === "featured" || !hoverCapable || pointerOver || focusWithin);
+    isDrive && inView && !reduce && (variant === "featured" || !hoverCapable || pointerOver || focusWithin);
 
   const driveIframeSrc = wantDriveEmbed
     ? driveFilePreviewUrl(project.googleDriveFileId, {
@@ -57,7 +62,6 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
     return () => register(project.id, null);
   }, [project.id, register, isDrive]);
 
-  /** Featured strip: native clips autoplay muted in view on all devices. */
   useEffect(() => {
     if (isDrive) return;
     if (variant !== "featured") return;
@@ -112,21 +116,38 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
   const driveShowSkeleton = isDrive && thumbSrc && !thumbLoaded && !thumbFailed;
   const driveIdleFallback = isDrive && thumbFailed && !driveIframeSrc;
 
+  const isFeatured = variant === "featured";
+  const chromeTitle = footerCategoryOnly ? project.category : project.title;
+  const chromeSub = footerCategoryOnly ? "Featured lane" : project.category;
+
+  const aspectClass = isFeatured ? "aspect-[16/9] min-h-[11.5rem] sm:min-h-[13rem] lg:aspect-[21/9] lg:min-h-[12.5rem]" : "aspect-[4/5] min-h-[14rem]";
+
   return (
     <article
       ref={rootRef}
-      className={`video-card ${variant === "featured" ? "video-card--featured" : ""} ${variant === "grid" ? "video-card--grid" : ""}`}
+      className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-card shadow-card ring-1 ring-white/[0.04] transition duration-500 ease-out hover:-translate-y-1 hover:border-accent/35 hover:shadow-[0_28px_80px_rgba(0,0,0,0.55)]"
       onFocusCapture={() => setFocusWithin(true)}
       onBlurCapture={(e) => {
         if (!rootRef.current?.contains(e.relatedTarget)) setFocusWithin(false);
       }}
     >
-      <div className="video-card__media">
+      <div className="relative z-[5] flex items-center gap-3 border-b border-white/10 bg-black/35 px-4 py-3 backdrop-blur-sm">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-gradient-to-br from-white/10 to-transparent text-xs font-bold text-fg">
+          {initialsFromTitle(chromeTitle)}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold tracking-tight text-fg">{chromeTitle}</p>
+          <p className="truncate text-[11px] font-medium uppercase tracking-[0.14em] text-muted">{chromeSub}</p>
+        </div>
+        <BadgeCheck className="h-5 w-5 shrink-0 text-sky-400/90" aria-hidden />
+      </div>
+
+      <div className={`relative flex-1 overflow-hidden bg-black ${aspectClass}`}>
         {isDrive ? (
           <>
             {thumbSrc && !thumbFailed ? (
               <img
-                className={`video-card__poster ${!reduce && variant !== "featured" ? "video-card__poster--motion" : ""}`}
+                className={`absolute inset-0 z-0 h-full w-full object-cover ${!reduce && variant !== "featured" ? "video-card-ken" : ""}`}
                 src={thumbSrc}
                 alt=""
                 loading="lazy"
@@ -140,15 +161,32 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
               />
             ) : null}
             {driveIdleFallback ? (
-              <div className="video-card__drive-idle" aria-hidden>
-                <span className="video-card__drive-idle__lines" />
-                <span className="video-card__drive-idle__glow" />
+              <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden>
+                <span
+                  className="absolute inset-0 opacity-85"
+                  style={{
+                    background: "radial-gradient(ellipse, rgba(255,23,23,0.15), transparent 70%)",
+                  }}
+                />
+                <span
+                  className="absolute inset-0 opacity-60"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(-12deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 11px)",
+                    maskImage: "linear-gradient(to bottom, black 30%, transparent)",
+                  }}
+                />
               </div>
             ) : null}
             {!thumbSrc && !driveIframeSrc ? (
-              <div className="video-card__drive-idle" aria-hidden>
-                <span className="video-card__drive-idle__lines" />
-                <span className="video-card__drive-idle__glow" />
+              <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden>
+                <span
+                  className="absolute inset-0 opacity-60"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(-12deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 11px)",
+                  }}
+                />
               </div>
             ) : null}
             {driveIframeSrc ? (
@@ -157,16 +195,16 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
                 key={driveIframeSrc}
                 src={driveIframeSrc}
                 loading="lazy"
-                className="video-card__embed video-card__embed--layer"
+                className="pointer-events-none absolute inset-0 z-[3] h-full w-full min-h-0 border-0 object-cover"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
               />
             ) : null}
-            {driveShowSkeleton ? <div className="skeleton skeleton--embed" aria-hidden /> : null}
+            {driveShowSkeleton ? <div className="skeleton absolute inset-0 z-[3]" aria-hidden /> : null}
           </>
         ) : (
           <>
-            {!nativeReady ? <div className="skeleton" aria-hidden /> : null}
+            {!nativeReady ? <div className="skeleton absolute inset-0 z-0" aria-hidden /> : null}
             <video
               ref={videoRef}
               src={project.src}
@@ -176,25 +214,33 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
               loop
               preload="auto"
               loading="lazy"
-              className="video-card__video"
+              className="absolute inset-0 z-[1] h-full w-full object-cover"
               onLoadedData={() => setNativeReady(true)}
             />
           </>
         )}
-        <div className="video-card__shine" aria-hidden />
-      </div>
 
-      <div className={`video-card__body ${footerCategoryOnly ? "video-card__body--cat-only" : ""}`}>
-        <div>
-          {!footerCategoryOnly ? <h3 className="video-card__title">{project.title}</h3> : null}
-          <p className={`video-card__cat ${footerCategoryOnly ? "video-card__cat--solo" : ""}`}>{project.category}</p>
-          {!footerCategoryOnly && project.description ? <p className="video-card__desc">{project.description}</p> : null}
+        <div
+          className="pointer-events-none absolute inset-0 z-[4] bg-gradient-to-t from-black/70 via-transparent to-black/20 opacity-0 transition duration-500 group-hover:opacity-100 group-focus-within:opacity-100"
+          aria-hidden
+        />
+
+        <div className="pointer-events-none absolute inset-0 z-[4] flex flex-col justify-end p-5 opacity-0 transition duration-500 group-hover:opacity-100 group-focus-within:opacity-100">
+          {!footerCategoryOnly && project.description ? (
+            <p className="mb-2 line-clamp-2 text-sm text-muted">{project.description}</p>
+          ) : null}
+          <div className="flex items-end justify-between gap-3">
+            <h3 className="m-0 text-lg font-medium tracking-tight text-fg">{project.title}</h3>
+            <span className="shrink-0 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold text-fg backdrop-blur-sm">
+              View project
+            </span>
+          </div>
         </div>
       </div>
 
       <motion.button
         type="button"
-        className="video-card__hit"
+        className="absolute inset-0 z-[6] cursor-pointer rounded-[inherit] border-0 bg-transparent p-0"
         aria-label={footerCategoryOnly ? `Open ${project.category} piece in viewer` : `Open ${project.title} in viewer`}
         onClick={() => onOpen()}
         onMouseEnter={() => {
@@ -205,215 +251,10 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
           setPointerOver(false);
           stopNativeHoverPreview();
         }}
-        whileHover={reduce ? undefined : { scale: 1.008 }}
-        whileTap={reduce ? undefined : { scale: 0.996 }}
+        whileHover={reduce ? undefined : { scale: 1.002 }}
+        whileTap={reduce ? undefined : { scale: 0.998 }}
       />
 
-      <style>{`
-        @keyframes videoCardKen {
-          from {
-            transform: scale(1) translate(0, 0);
-          }
-          to {
-            transform: scale(1.08) translate(-1.2%, -0.8%);
-          }
-        }
-        .video-card__poster {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          z-index: 0;
-          transform-origin: 50% 40%;
-        }
-        .video-card__poster--motion {
-          animation: videoCardKen 14s ease-in-out infinite alternate;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .video-card__poster--motion {
-            animation: none;
-          }
-        }
-        .video-card--grid {
-          flex: 1 1 auto;
-          display: flex;
-          flex-direction: column;
-          min-height: 0;
-        }
-        .video-card--grid .video-card__media {
-          flex: 1 1 auto;
-          min-height: 11rem;
-        }
-        .video-card--grid .video-card__body {
-          flex-shrink: 0;
-        }
-        .video-card {
-          position: relative;
-          border-radius: var(--radius-lg);
-          overflow: hidden;
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          background: linear-gradient(165deg, rgba(255, 255, 255, 0.05) 0%, rgba(12, 12, 16, 0.92) 42%, rgba(6, 6, 8, 0.98) 100%);
-          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
-          transition: border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
-        }
-        @media (hover: hover) and (pointer: fine) {
-          .video-card:hover {
-            border-color: rgba(124, 156, 255, 0.35);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 56px rgba(0, 0, 0, 0.5), 0 0 48px rgba(124, 156, 255, 0.08);
-          }
-        }
-        .video-card:focus-within {
-          border-color: rgba(124, 156, 255, 0.45);
-          box-shadow: 0 0 0 2px rgba(124, 156, 255, 0.2), 0 20px 50px rgba(0, 0, 0, 0.45);
-        }
-        .video-card__media {
-          position: relative;
-          background: radial-gradient(ellipse 120% 80% at 50% 0%, #1a1d2e 0%, #050508 55%);
-          overflow: hidden;
-        }
-        .video-card--featured .video-card__media {
-          aspect-ratio: 16 / 9;
-          min-height: 11.5rem;
-        }
-        @media (min-width: 480px) {
-          .video-card--featured .video-card__media {
-            min-height: 13rem;
-          }
-        }
-        @media (min-width: 960px) {
-          .video-card--featured .video-card__media {
-            aspect-ratio: 21 / 9;
-            min-height: 12.5rem;
-          }
-        }
-        .video-card__video,
-        .video-card__embed {
-          width: 100%;
-          height: 100%;
-          min-height: 160px;
-          border: 0;
-          object-fit: cover;
-        }
-        .video-card__embed {
-          object-fit: cover;
-          pointer-events: none;
-        }
-        .video-card__embed--layer {
-          position: absolute;
-          inset: 0;
-          z-index: 3;
-          min-height: 0;
-        }
-        .video-card__drive-idle {
-          position: absolute;
-          inset: 0;
-          overflow: hidden;
-          z-index: 0;
-        }
-        .video-card__drive-idle__glow {
-          position: absolute;
-          width: 140%;
-          height: 80%;
-          left: -20%;
-          top: 35%;
-          background: radial-gradient(ellipse, rgba(124, 156, 255, 0.18), transparent 70%);
-          opacity: 0.85;
-        }
-        .video-card__drive-idle__lines {
-          position: absolute;
-          inset: 0;
-          background: repeating-linear-gradient(
-            -12deg,
-            transparent,
-            transparent 10px,
-            rgba(255, 255, 255, 0.03) 10px,
-            rgba(255, 255, 255, 0.03) 11px
-          );
-          mask-image: linear-gradient(to bottom, black 30%, transparent);
-        }
-        .video-card__shine {
-          position: absolute;
-          inset: 0;
-          z-index: 1;
-          background: linear-gradient(
-            125deg,
-            rgba(255, 255, 255, 0.14) 0%,
-            transparent 38%,
-            transparent 62%,
-            rgba(124, 156, 255, 0.1) 100%
-          );
-          opacity: 0;
-          transition: opacity 0.4s ease;
-          pointer-events: none;
-        }
-        @media (hover: hover) and (pointer: fine) {
-          .video-card:hover .video-card__shine {
-            opacity: 1;
-          }
-        }
-        .video-card__body {
-          position: relative;
-          padding: var(--space-5) var(--space-5) var(--space-6);
-          border-top: 1px solid rgba(255, 255, 255, 0.06);
-          background: linear-gradient(to bottom, rgba(8, 8, 10, 0.15), rgba(6, 6, 8, 0.96));
-        }
-        .video-card__body--cat-only {
-          padding: var(--space-3) var(--space-4);
-        }
-        @media (min-width: 480px) {
-          .video-card__body--cat-only {
-            padding: var(--space-4) var(--space-5);
-          }
-        }
-        .video-card__cat--solo {
-          margin: 0;
-          font-size: clamp(0.7rem, 2.8vw, var(--text-sm));
-          letter-spacing: clamp(0.06em, 0.8vw, 0.16em);
-          font-weight: 600;
-          text-transform: uppercase;
-          color: var(--text-muted);
-          line-height: 1.35;
-          overflow-wrap: anywhere;
-          hyphens: auto;
-        }
-        .video-card__title {
-          margin: 0 0 var(--space-2);
-          font-size: var(--text-base);
-          letter-spacing: -0.02em;
-          font-weight: 600;
-        }
-        .video-card__cat {
-          margin: 0;
-          font-size: var(--text-xs);
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          color: var(--text-subtle);
-        }
-        .video-card__desc {
-          margin: var(--space-3) 0 0;
-          color: var(--text-muted);
-          font-size: var(--text-sm);
-        }
-        .video-card__hit {
-          position: absolute;
-          inset: 0;
-          border: none;
-          padding: 0;
-          margin: 0;
-          background: transparent;
-          cursor: pointer;
-          border-radius: inherit;
-          z-index: 6;
-        }
-        .skeleton--embed {
-          position: absolute;
-          inset: 0;
-          z-index: 3;
-          pointer-events: none;
-        }
-      `}</style>
     </article>
   );
 }

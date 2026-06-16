@@ -22,6 +22,13 @@ export const siteConfig = {
     cta: { href: "#contact", label: "Book call" },
   },
 
+  /** Short strip above the full portfolio grid. */
+  workStrip: {
+    eyebrow: "Featured",
+    title: "Opening sequence",
+    lead: "A few hand-picked cuts to set the tone — explore the full grid below.",
+  },
+
   hero: {
     urgency: "Hurry — limited spots this month.",
     headline: "Editing that",
@@ -45,24 +52,31 @@ export const siteConfig = {
         body: "Scroll-stopping Meta ads, hooks, captions-on-brand, and motion passes that survive testing at scale.",
         cta: "See ads",
         href: "#portfolio",
+        portfolioFilter: "Facebook Ads",
+        visual: "motion",
       },
       {
         title: "SaaS & explainers",
         body: "Product-led story, UI capture, supers, and clean pacing so features read fast on a landing page or demo.",
         cta: "See SaaS",
         href: "#portfolio",
+        portfolioFilter: "SaaS ADS",
+        visual: "saas",
       },
       {
         title: "Talking-head + GFX",
         body: "Punchy A-roll, lower thirds, chapter beats, and graphics that keep long-form watchable start to finish.",
         cta: "See samples",
         href: "#portfolio",
+        portfolioFilter: "Talking Head Motion Graphics",
+        visual: "talk",
       },
       {
         title: "Finish & delivery",
         body: "Sound polish, mix, loudness-safe exports, and delivery specs matched to YouTube, Meta, or internal review.",
         cta: "Process",
         href: "#process",
+        visual: "compare",
       },
     ],
   },
@@ -207,10 +221,24 @@ export const siteConfig = {
     subhead: "Tell me about your timeline, platforms, and what “done” looks like — I’ll reply with next steps.",
     email: "capx86@gmail.com",
     linkedinUrl: "https://www.linkedin.com/in/carlos-pe%C3%B1alo-9a797228a/",
+    /** Optional — shown in footer when set. */
+    youtubeUrl: "",
     phone: "+1 849-220-6301",
     instagramUrl: "",
     formspreeEndpoint: "https://formspree.io/f/xvznlnel",
   },
+
+  /** Closing CTA band above footer. */
+  finalCta: {
+    title: "Ready to ship your next cut?",
+    lead: "Let’s turn your brief and footage into edits that read fast — ads, explainers, or long-form.",
+    primary: "Book a call",
+    secondary: "View my work",
+  },
+
+  /** Short line under logo in footer. */
+  footerTagline:
+    "Motion-forward editing for brands, SaaS, and creators — built for retention, clarity, and delivery you can trust.",
 
   categories: [
     {

@@ -5,23 +5,27 @@ const ALL = "all";
 export function CategoryFilters({ activeFilter, onChange, projectCount }) {
   const reduce = useReducedMotion();
   const filters = [
-    { id: ALL, label: "All work" },
-    { id: "Talking Head Motion Graphics", label: "Talking head" },
-    { id: "Simple Style", label: "Simple style" },
-    { id: "SaaS ADS", label: "SaaS ads" },
-    { id: "Facebook Ads", label: "Facebook ads" },
+    { id: ALL, label: "All" },
+    { id: "Talking Head Motion Graphics", label: "Talking Head" },
+    { id: "Simple Style", label: "Simple Style" },
+    { id: "SaaS ADS", label: "SaaS Ads" },
+    { id: "Facebook Ads", label: "Facebook Ads" },
   ];
 
   return (
-    <div className="filters" id="portfolio">
-      <div className="filters__row">
+    <div className="mt-6">
+      <div className="flex flex-wrap justify-center gap-2 md:gap-3">
         {filters.map((f) => {
           const active = activeFilter === f.id;
           return (
             <motion.button
               key={f.id}
               type="button"
-              className={`filter-pill ${active ? "filter-pill--active" : ""}`}
+              className={`rounded-full border px-5 py-2.5 text-sm font-semibold transition duration-300 ${
+                active
+                  ? "border-accent bg-transparent text-fg shadow-[0_0_24px_rgba(255,23,23,0.18)]"
+                  : "border-white/10 bg-white/[0.03] text-muted hover:border-white/20 hover:text-fg"
+              }`}
               onClick={() => onChange(f.id)}
               aria-pressed={active}
               layout
@@ -33,50 +37,10 @@ export function CategoryFilters({ activeFilter, onChange, projectCount }) {
           );
         })}
       </div>
-      <p className="filters__meta" aria-live="polite">
-        Showing <strong>{projectCount}</strong> {projectCount === 1 ? "project" : "projects"}
+      <p className="mt-4 text-center text-sm text-muted" aria-live="polite">
+        Showing <span className="font-semibold text-fg">{projectCount}</span>{" "}
+        {projectCount === 1 ? "project" : "projects"}
       </p>
-      <style>{`
-        .filters {
-          margin-top: var(--space-10);
-        }
-        .filters__row {
-          display: flex;
-          flex-wrap: wrap;
-          gap: var(--space-2);
-        }
-        .filter-pill {
-          border-radius: 999px;
-          border: 1px solid var(--border);
-          background: rgba(255, 255, 255, 0.03);
-          color: var(--text-muted);
-          font: inherit;
-          font-size: var(--text-sm);
-          padding: 10px 16px;
-          cursor: pointer;
-          transition: color var(--transition-fast), border-color var(--transition-fast),
-            background var(--transition-fast);
-        }
-        .filter-pill:hover {
-          color: var(--text);
-          border-color: var(--border-strong);
-          background: rgba(255, 255, 255, 0.06);
-        }
-        .filter-pill--active {
-          color: #0a0a0c;
-          background: linear-gradient(135deg, #dfe4ff, var(--accent));
-          border-color: transparent;
-        }
-        .filters__meta {
-          margin: var(--space-4) 0 0;
-          color: var(--text-subtle);
-          font-size: var(--text-sm);
-        }
-        .filters__meta strong {
-          color: var(--text-muted);
-          font-weight: 600;
-        }
-      `}</style>
     </div>
   );
 }

@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { PreviewVideoProvider } from "@/context/PreviewVideoContext.jsx";
 import { siteConfig } from "@/config/siteConfig.js";
-import { videoProjects, getCategoryCounts, getFeaturedProjectsSorted } from "@/data/videoProjects.js";
+import { videoProjects, getFeaturedProjectsSorted } from "@/data/videoProjects.js";
 import { getPersonJsonLd } from "@/seo/jsonLd.js";
 import { Navbar } from "@/components/Navbar.jsx";
 import { Hero } from "@/components/Hero.jsx";
 import { About } from "@/components/About.jsx";
-import { CategoryShowcase } from "@/components/CategoryShowcase.jsx";
 import { Contact } from "@/components/Contact.jsx";
 import { FAQ } from "@/components/FAQ.jsx";
 import { FeaturedWork } from "@/components/FeaturedWork.jsx";
+import { FinalCta } from "@/components/FinalCta.jsx";
 import { Footer } from "@/components/Footer.jsx";
 import { PortfolioSection } from "@/components/PortfolioSection.jsx";
 import { Process } from "@/components/Process.jsx";
@@ -28,8 +28,6 @@ export default function App() {
     [filter]
   );
 
-  const counts = useMemo(() => getCategoryCounts(videoProjects), []);
-
   const heroVideo = useMemo(() => {
     const featured = getFeaturedProjectsSorted(videoProjects);
     return featured[0] ?? videoProjects[0] ?? null;
@@ -41,8 +39,8 @@ export default function App() {
     setModal({ open: true, playlist: [...list], index: Math.max(0, index) });
   };
 
-  const handleCategoryPick = (catId) => {
-    setFilter(catId);
+  const handlePortfolioFilter = (categoryId) => {
+    setFilter(categoryId);
     window.requestAnimationFrame(() => {
       document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
@@ -79,16 +77,15 @@ export default function App() {
       <Navbar />
       <main>
         <Hero heroVideoProject={heroVideo} />
-        <Services />
+        <Services onPortfolioFilter={handlePortfolioFilter} />
         <FeaturedWork projects={videoProjects} onOpenProject={openModal} />
-        <WhyMe />
-        <CategoryShowcase counts={counts} activeFilter={filter} onSelectCategory={handleCategoryPick} />
         <PortfolioSection
           projects={filtered}
           activeFilter={filter}
           onFilterChange={setFilter}
           onOpenProject={openModal}
         />
+        <WhyMe />
         <StatsStrip />
         <About />
         <Process />
@@ -96,6 +93,7 @@ export default function App() {
         <Contact />
         <FAQ />
       </main>
+      <FinalCta />
       <Footer />
       <VideoModal
         open={modal.open}

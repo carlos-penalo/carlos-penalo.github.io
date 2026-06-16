@@ -1,6 +1,6 @@
 # Carlos Peñalo — Video Editor Portfolio
 
-A lightweight **React + Vite** portfolio for GitHub Pages. **Videos are loaded by public HTTPS URLs** you list in [`src/data/manualVideos.js`](src/data/manualVideos.js) — you do **not** need video files in the repository or on your PC for the site to work. Animations use **Framer Motion**; icons use **Lucide React**.
+A lightweight **React + Vite** portfolio for GitHub Pages. **Videos are loaded by public HTTPS URLs** you list in [`src/data/manualVideos.js`](src/data/manualVideos.js) — you do **not** need video files in the repository or on your PC for the site to work. Styling uses **Tailwind CSS** (v4 via `@tailwindcss/vite`); motion uses **Framer Motion**; icons use **Lucide React**.
 
 Optionally, you can still drop small `.mp4` / `.webm` / `.mov` samples under `src/assets/videos/` for local experiments; those paths are **gitignored** by default so they are not committed.
 
@@ -175,7 +175,9 @@ carlos-penalo.github.io/
 | Item | Location |
 |------|-----------|
 | Video URLs + titles + categories | `src/data/manualVideos.js` → `manualVideoProjects` |
-| Email, LinkedIn, Instagram | `src/config/siteConfig.js` → `contact` |
+| Email, LinkedIn, Instagram, YouTube | `src/config/siteConfig.js` → `contact` |
+| Featured strip copy (above grid) | `siteConfig.workStrip` |
+| Closing CTA + footer tagline | `siteConfig.finalCta`, `siteConfig.footerTagline` |
 | Formspree endpoint | `src/config/siteConfig.js` → `contact.formspreeEndpoint` |
 | Open Graph image URL (optional) | `src/config/siteConfig.js` → `ogImageUrl` |
 | Overrides if using local files | `src/data/videoProjects.js` → `projectOverrides` |

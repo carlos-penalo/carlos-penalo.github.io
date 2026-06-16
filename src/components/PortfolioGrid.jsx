@@ -6,54 +6,23 @@ export function PortfolioGrid({ projects, onOpenProject }) {
 
   return (
     <LayoutGroup id="portfolio-grid">
-      <motion.div layout className="portfolio-grid">
+      <motion.div layout className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-7 lg:grid-cols-3 lg:gap-8">
         <AnimatePresence mode="popLayout" initial={false}>
           {projects.map((p, i) => (
             <motion.div
               key={p.id}
               layout
-              initial={reduce ? false : { opacity: 0, y: 14 }}
-              animate={reduce ? false : { opacity: 1, y: 0 }}
-              exit={reduce ? false : { opacity: 0, y: 10 }}
-              transition={{ duration: reduce ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] }}
-              className="portfolio-grid__cell"
-              style={{ transitionDelay: reduce ? "0ms" : `${Math.min(i, 10) * 22}ms` }}
+              initial={reduce ? false : { opacity: 0, y: 16, scale: 0.96 }}
+              animate={reduce ? false : { opacity: 1, y: 0, scale: 1 }}
+              exit={reduce ? false : { opacity: 0, y: 12, scale: 0.96 }}
+              transition={{ duration: reduce ? 0 : 0.4, ease: [0.22, 1, 0.36, 1], delay: reduce ? 0 : Math.min(i, 10) * 0.02 }}
+              className="flex min-h-0 flex-col"
             >
               <VideoCard project={p} onOpen={() => onOpenProject(p, projects)} variant="grid" />
             </motion.div>
           ))}
         </AnimatePresence>
       </motion.div>
-      <style>{`
-        .portfolio-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          align-items: stretch;
-          gap: clamp(1.25rem, 3vw, 2rem);
-          margin-top: var(--space-8);
-          padding-bottom: var(--space-4);
-        }
-        .portfolio-grid__cell {
-          display: flex;
-          flex-direction: column;
-          min-height: 0;
-        }
-        @media (min-width: 720px) {
-          .portfolio-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: clamp(1.35rem, 2.5vw, 1.75rem);
-          }
-        }
-        @media (min-width: 1080px) {
-          .portfolio-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: clamp(1.25rem, 2vw, 1.65rem);
-          }
-          .portfolio-grid__cell:nth-child(6n + 1) {
-            grid-column: span 2;
-          }
-        }
-      `}</style>
     </LayoutGroup>
   );
 }
