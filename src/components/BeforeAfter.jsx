@@ -6,11 +6,13 @@ function clamp(n, min, max) {
 }
 
 /**
- * Placeholder before/after slider — swap layers for real stills when available.
+ * Before/after slider. Pass `beforeSrc` / `afterSrc` (e.g. "/services/grade-before.png").
+ * Falls back to decorative gradients when no images are provided.
  */
-export function BeforeAfter({ className = "" }) {
+export function BeforeAfter({ className = "", beforeSrc = "", afterSrc = "" }) {
   const reduce = useReducedMotion();
   const id = useId();
+  const hasImages = Boolean(beforeSrc && afterSrc);
   const rootRef = useRef(null);
   const dragging = useRef(false);
   const [pct, setPct] = useState(52);
@@ -60,37 +62,60 @@ export function BeforeAfter({ className = "" }) {
       </span>
 
       {/* After (full) */}
-      <div
-        className="absolute inset-0 bg-gradient-to-br from-[#1a0a0a] via-[#120606] to-[#050505]"
-        aria-hidden
-      />
-      <div
-        className="absolute inset-0 opacity-90 mix-blend-screen"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 70% at 70% 40%, rgba(255,23,23,0.22), transparent 60%), radial-gradient(circle at 30% 80%, rgba(255,255,255,0.06), transparent 45%)",
-        }}
-        aria-hidden
-      />
+      {hasImages ? (
+        <img
+          src={afterSrc}
+          alt="After color grade"
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+        />
+      ) : (
+        <>
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1a0a0a] via-[#120606] to-[#050505]" aria-hidden />
+          <div
+            className="absolute inset-0 opacity-90 mix-blend-screen"
+            style={{
+              background:
+                "radial-gradient(ellipse 80% 70% at 70% 40%, rgba(255,23,23,0.22), transparent 60%), radial-gradient(circle at 30% 80%, rgba(255,255,255,0.06), transparent 45%)",
+            }}
+            aria-hidden
+          />
+        </>
+      )}
 
-      {/* Before (clipped, muted) */}
-      <div
-        className="absolute inset-y-0 left-0 overflow-hidden border-r border-white/25"
-        style={{ width: `${pct}%` }}
-        aria-hidden
-      >
-        <div
-          className="absolute inset-0 bg-gradient-to-br from-[#111] via-[#0a0a0a] to-black"
-          style={{ filter: reduce ? undefined : "saturate(0.35) contrast(0.92) brightness(0.72)" }}
+      {/* Before — full-size overlay clipped to the left of the handle */}
+      {hasImages ? (
+        <img
+          src={beforeSrc}
+          alt="Before color grade"
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ clipPath: `inset(0 ${100 - pct}% 0 0)` }}
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+          aria-hidden
         />
+      ) : (
         <div
-          className="absolute inset-0 opacity-50"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(-18deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 11px)",
-          }}
-        />
-      </div>
+          className="absolute inset-y-0 left-0 overflow-hidden border-r border-white/25"
+          style={{ width: `${pct}%` }}
+          aria-hidden
+        >
+          <div
+            className="absolute inset-0 bg-gradient-to-br from-[#111] via-[#0a0a0a] to-black"
+            style={{ filter: reduce ? undefined : "saturate(0.35) contrast(0.92) brightness(0.72)" }}
+          />
+          <div
+            className="absolute inset-0 opacity-50"
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(-18deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 11px)",
+            }}
+          />
+        </div>
+      )}
 
       {/* Divider + handle */}
       <div

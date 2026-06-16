@@ -10,6 +10,7 @@ export function Footer() {
   const year = new Date().getFullYear();
   const { nav, contact, footerTagline } = siteConfig;
   const showInstagram = Boolean(contact.instagramUrl?.trim());
+  const showX = Boolean(contact.xUrl?.trim());
   const showYoutube = Boolean(contact.youtubeUrl?.trim());
   const phone = typeof contact.phone === "string" ? contact.phone.trim() : "";
   const phoneTel = phone ? `tel:+${phone.replace(/\D/g, "")}` : "";
@@ -60,6 +61,11 @@ export function Footer() {
           <a href={contact.linkedinUrl} className="w-fit transition hover:text-fg" target="_blank" rel="noreferrer">
             LinkedIn
           </a>
+          {showX ? (
+            <a href={contact.xUrl} className="w-fit transition hover:text-fg" target="_blank" rel="noreferrer">
+              X
+            </a>
+          ) : null}
           {showYoutube ? (
             <a href={contact.youtubeUrl} className="w-fit transition hover:text-fg" target="_blank" rel="noreferrer">
               YouTube

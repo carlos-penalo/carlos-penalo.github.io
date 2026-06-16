@@ -80,14 +80,14 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-[1000] px-4 pt-4 md:px-6">
-      <div className="mx-auto w-full max-w-[680px]">
+      <div className="mx-auto w-full max-w-[min(96vw,860px)]">
         <div
-          className={`flex items-center justify-between gap-3 rounded-full border border-white/10 bg-black/55 px-3 shadow-card backdrop-blur-xl transition-all duration-300 md:px-4 ${
+          className={`flex items-center justify-between gap-2 rounded-full border border-white/10 bg-black/55 px-3 shadow-card backdrop-blur-xl transition-all duration-300 sm:gap-3 md:gap-4 md:px-5 ${
             scrolled ? "min-h-[56px] py-2" : "min-h-[68px] py-2.5"
           }`}
         >
           <a
-            className="flex min-w-0 items-center gap-3"
+            className="flex shrink-0 items-center gap-3"
             href="#top"
             onClick={(e) => {
               e.preventDefault();
@@ -98,9 +98,9 @@ export function Navbar() {
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-white shadow-[0_0_24px_rgba(255,23,23,0.35)]">
               <Clapperboard className="h-5 w-5" aria-hidden />
             </span>
-            <span className="flex min-w-0 flex-col leading-tight">
-              <span className="truncate font-semibold tracking-tight text-fg">{siteConfig.name}</span>
-              <span className="truncate text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
+            <span className="flex flex-col leading-tight">
+              <span className="whitespace-nowrap font-semibold tracking-tight text-fg">{siteConfig.name}</span>
+              <span className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
                 {siteConfig.role}
               </span>
             </span>
@@ -111,7 +111,7 @@ export function Navbar() {
               <a
                 key={l.href}
                 href={l.href}
-                className="rounded-full px-3 py-2 text-sm font-semibold text-muted transition-colors duration-300 hover:text-fg"
+                className="rounded-full px-2.5 py-2 text-sm font-semibold text-muted transition-colors duration-300 hover:text-fg md:px-3"
                 onClick={(e) => {
                   e.preventDefault();
                   scrollToHash(l.href);
@@ -121,7 +121,7 @@ export function Navbar() {
               </a>
             ))}
             <a
-              className="ml-1 inline-flex items-center justify-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-[0_0_32px_rgba(255,23,23,0.25)] transition duration-300 hover:scale-[1.04] hover:shadow-[0_0_44px_rgba(255,23,23,0.4)]"
+              className="ml-1 inline-flex items-center justify-center whitespace-nowrap rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_32px_rgba(255,23,23,0.25)] transition duration-300 hover:scale-[1.04] hover:shadow-[0_0_44px_rgba(255,23,23,0.4)] md:px-5"
               href={nav.cta.href}
               onClick={(e) => {
                 e.preventDefault();

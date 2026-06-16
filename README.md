@@ -175,7 +175,7 @@ carlos-penalo.github.io/
 | Item | Location |
 |------|-----------|
 | Video URLs + titles + categories | `src/data/manualVideos.js` → `manualVideoProjects` |
-| Email, LinkedIn, Instagram, YouTube | `src/config/siteConfig.js` → `contact` |
+| Email, LinkedIn, Instagram, YouTube, X | `src/config/siteConfig.js` → `contact` (`xUrl`, `instagramUrl`, …) |
 | Featured strip copy (above grid) | `siteConfig.workStrip` |
 | Closing CTA + footer tagline | `siteConfig.finalCta`, `siteConfig.footerTagline` |
 | Formspree endpoint | `src/config/siteConfig.js` → `contact.formspreeEndpoint` |

@@ -10,21 +10,26 @@ function scrollToHash(hash) {
 
 function ServiceVisual({ kind }) {
   if (kind === "compare") {
-    return <BeforeAfter className="h-full min-h-[220px] md:min-h-[280px]" />;
+    return (
+      <BeforeAfter
+        className="h-full min-h-[220px] md:min-h-[280px]"
+        beforeSrc="/services/grade-before.png"
+        afterSrc="/services/grade-after.png"
+      />
+    );
   }
   if (kind === "saas") {
     return (
-      <div className="relative h-full min-h-[220px] overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#0f0f12] via-card to-canvas md:min-h-[280px]">
-        <div
-          className="absolute inset-6 rounded-xl border border-white/10 bg-black/40 shadow-inner"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
-            backgroundSize: "22px 22px",
-          }}
+      <div className="relative h-full min-h-[220px] overflow-hidden rounded-2xl border border-white/10 bg-card md:min-h-[280px]">
+        <img
+          src="/services/saas-ui.png"
+          alt="SaaS analytics dashboard UI"
+          className="absolute inset-0 h-full w-full object-cover object-left-top"
+          loading="lazy"
+          decoding="async"
+          draggable={false}
         />
-        <div className="absolute bottom-6 left-6 right-6 h-24 rounded-lg border border-accent/25 bg-accent/10 blur-[0.5px]" />
-        <p className="absolute left-6 top-6 text-xs font-semibold uppercase tracking-[0.2em] text-muted">UI capture</p>
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" aria-hidden />
       </div>
     );
   }

@@ -224,7 +224,10 @@ export const siteConfig = {
     /** Optional — shown in footer when set. */
     youtubeUrl: "",
     phone: "+1 849-220-6301",
-    instagramUrl: "",
+    /** @capmediaae */
+    xUrl: "https://x.com/capmediaae",
+    /** @capmedia_ae */
+    instagramUrl: "https://www.instagram.com/capmedia_ae/",
     formspreeEndpoint: "https://formspree.io/f/xvznlnel",
   },
 

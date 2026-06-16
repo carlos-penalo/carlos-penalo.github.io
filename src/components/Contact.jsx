@@ -2,6 +2,7 @@ import { useId, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Copy, Instagram, Linkedin, Mail, Phone } from "lucide-react";
 import { siteConfig } from "@/config/siteConfig.js";
+import { XLogo } from "@/components/icons/XLogo.jsx";
 
 export function Contact() {
   const reduce = useReducedMotion();
@@ -19,6 +20,7 @@ export function Contact() {
   };
 
   const showInstagram = Boolean(siteConfig.contact.instagramUrl?.trim());
+  const showX = Boolean(siteConfig.contact.xUrl?.trim());
   const phone = typeof siteConfig.contact.phone === "string" ? siteConfig.contact.phone.trim() : "";
   const phoneTel = phone ? `tel:+${phone.replace(/\D/g, "")}` : "";
 
@@ -64,6 +66,17 @@ export function Contact() {
                 <Linkedin className="h-4 w-4" aria-hidden />
                 LinkedIn
               </a>
+              {showX ? (
+                <a
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-fg transition hover:border-white/25 hover:bg-white/[0.05]"
+                  href={siteConfig.contact.xUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <XLogo className="h-4 w-4" aria-hidden />
+                  X
+                </a>
+              ) : null}
               {showInstagram ? (
                 <a
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-fg transition hover:border-white/25 hover:bg-white/[0.05]"
