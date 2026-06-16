@@ -73,7 +73,7 @@ export function Hero({ heroVideoProject }) {
                   <iframe
                     title=""
                     className="hero-reel__video hero-reel__embed"
-                    src={driveFilePreviewUrl(heroVideoProject.googleDriveFileId, { autoplay: !reduce })}
+                    src={driveFilePreviewUrl(heroVideoProject.googleDriveFileId, { autoplay: !reduce, loop: !reduce })}
                     loading="lazy"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen

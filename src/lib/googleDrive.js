@@ -1,6 +1,6 @@
 /**
  * Google Drive file preview embed (works in iframe, not as <video src>).
- * @param {{ autoplay?: boolean }} [options] — `autoplay` hints the Drive player to start muted when allowed by the browser.
+ * @param {{ autoplay?: boolean; loop?: boolean }} [options] — `autoplay` / `loop` are hints for the Drive player (support varies by browser).
  */
 export function driveFilePreviewUrl(fileId, options = {}) {
   if (!fileId || typeof fileId !== "string") return "";
@@ -8,6 +8,7 @@ export function driveFilePreviewUrl(fileId, options = {}) {
   const base = `https://drive.google.com/file/d/${id}/preview`;
   const params = new URLSearchParams();
   if (options.autoplay) params.set("autoplay", "1");
+  if (options.loop) params.set("loop", "1");
   const qs = params.toString();
   return qs ? `${base}?${qs}` : base;
 }

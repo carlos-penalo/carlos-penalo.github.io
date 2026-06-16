@@ -25,14 +25,21 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
     (project.googleDriveFileId ? driveThumbnailUrl(project.googleDriveFileId, 1200) : "");
 
   /**
-   * Motion embed: touch = as soon as the card is on screen; desktop = in view + hover/focus
-   * (saves many simultaneous Drive iframes). Static "gif-like" frame always uses `thumbSrc`.
+   * Drive motion preview:
+   * - Featured row: play as soon as the card is in view (desktop + mobile), with loop hint.
+   * - Portfolio grid: in view on touch; on desktop also needs hover/focus (limits many iframes).
    */
   const wantDriveEmbed =
-    isDrive && inView && !reduce && (!hoverCapable || pointerOver || focusWithin);
+    isDrive &&
+    inView &&
+    !reduce &&
+    (variant === "featured" || !hoverCapable || pointerOver || focusWithin);
 
   const driveIframeSrc = wantDriveEmbed
-    ? driveFilePreviewUrl(project.googleDriveFileId, { autoplay: true })
+    ? driveFilePreviewUrl(project.googleDriveFileId, {
+        autoplay: true,
+        loop: variant === "featured",
+      })
     : "";
 
   useEffect(() => {
@@ -49,6 +56,19 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
     register(project.id, videoRef.current);
     return () => register(project.id, null);
   }, [project.id, register, isDrive]);
+
+  /** Featured strip: native clips autoplay muted in view on all devices. */
+  useEffect(() => {
+    if (isDrive) return;
+    if (variant !== "featured") return;
+    if (reduce) return;
+    if (!inView) {
+      pause(project.id);
+      return;
+    }
+    const t = window.setTimeout(() => playPreview(project.id), 100);
+    return () => window.clearTimeout(t);
+  }, [isDrive, variant, reduce, inView, playPreview, pause, project.id]);
 
   useEffect(() => {
     if (isDrive) return;
@@ -84,12 +104,10 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
 
   const stopNativeHoverPreview = () => {
     clearHoverTimer();
-    if (!isDrive) pause(project.id);
+    if (!isDrive && variant !== "featured") pause(project.id);
   };
 
   useEffect(() => () => clearHoverTimer(), []);
-
-  const featuredAspect = variant === "featured" ? "21 / 9" : null;
 
   const driveShowSkeleton = isDrive && thumbSrc && !thumbLoaded && !thumbFailed;
   const driveIdleFallback = isDrive && thumbFailed && !driveIframeSrc;
@@ -103,15 +121,12 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
         if (!rootRef.current?.contains(e.relatedTarget)) setFocusWithin(false);
       }}
     >
-      <div
-        className="video-card__media"
-        style={featuredAspect ? { aspectRatio: featuredAspect } : undefined}
-      >
+      <div className="video-card__media">
         {isDrive ? (
           <>
             {thumbSrc && !thumbFailed ? (
               <img
-                className={`video-card__poster ${!reduce ? "video-card__poster--motion" : ""}`}
+                className={`video-card__poster ${!reduce && variant !== "featured" ? "video-card__poster--motion" : ""}`}
                 src={thumbSrc}
                 alt=""
                 loading="lazy"
@@ -259,7 +274,19 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
           overflow: hidden;
         }
         .video-card--featured .video-card__media {
-          min-height: 220px;
+          aspect-ratio: 16 / 9;
+          min-height: 11.5rem;
+        }
+        @media (min-width: 480px) {
+          .video-card--featured .video-card__media {
+            min-height: 13rem;
+          }
+        }
+        @media (min-width: 960px) {
+          .video-card--featured .video-card__media {
+            aspect-ratio: 21 / 9;
+            min-height: 12.5rem;
+          }
         }
         .video-card__video,
         .video-card__embed {
@@ -333,15 +360,23 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
           background: linear-gradient(to bottom, rgba(8, 8, 10, 0.15), rgba(6, 6, 8, 0.96));
         }
         .video-card__body--cat-only {
-          padding: var(--space-4) var(--space-5);
+          padding: var(--space-3) var(--space-4);
+        }
+        @media (min-width: 480px) {
+          .video-card__body--cat-only {
+            padding: var(--space-4) var(--space-5);
+          }
         }
         .video-card__cat--solo {
           margin: 0;
-          font-size: var(--text-sm);
-          letter-spacing: 0.16em;
+          font-size: clamp(0.7rem, 2.8vw, var(--text-sm));
+          letter-spacing: clamp(0.06em, 0.8vw, 0.16em);
           font-weight: 600;
           text-transform: uppercase;
           color: var(--text-muted);
+          line-height: 1.35;
+          overflow-wrap: anywhere;
+          hyphens: auto;
         }
         .video-card__title {
           margin: 0 0 var(--space-2);
