@@ -1,5 +1,5 @@
 import { siteConfig } from "@/config/siteConfig.js";
-import { parseDriveFileIdFromUrl } from "@/lib/googleDrive.js";
+import { driveThumbnailUrl, parseDriveFileIdFromUrl } from "@/lib/googleDrive.js";
 import { manualVideoProjects } from "./manualVideos.js";
 
 /**
@@ -173,6 +173,10 @@ function normalizeManualVideo(raw) {
   const filename = typeof raw.filename === "string" ? raw.filename : `${slugifyId(title)}.mp4`;
   const id = raw.id ? String(raw.id) : slugifyId(`${category}-${driveId ?? filename}`);
 
+  const explicitPoster =
+    typeof raw.poster === "string" && raw.poster.trim() ? raw.poster.trim() : null;
+  const posterFromDrive = driveId ? driveThumbnailUrl(driveId, 1200) : null;
+
   return {
     id,
     title,
@@ -181,7 +185,7 @@ function normalizeManualVideo(raw) {
     description: typeof raw.description === "string" ? raw.description : "",
     src: directSrc ?? "",
     googleDriveFileId: driveId || null,
-    poster: typeof raw.poster === "string" ? raw.poster : null,
+    poster: explicitPoster ?? posterFromDrive,
     featured: Boolean(raw.featured),
     order: typeof raw.order === "number" ? raw.order : 998,
   };

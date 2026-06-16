@@ -58,14 +58,27 @@ export function Hero({ heroVideoProject }) {
             </div>
             <div className="hero-reel__media">
               {heroVideoProject.googleDriveFileId ? (
-                <iframe
-                  title=""
-                  className="hero-reel__video hero-reel__embed"
-                  src={driveFilePreviewUrl(heroVideoProject.googleDriveFileId, { autoplay: !reduce })}
-                  loading="lazy"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
+                <>
+                  {heroVideoProject.poster ? (
+                    <img
+                      className="hero-reel__thumb"
+                      src={heroVideoProject.poster}
+                      alt=""
+                      loading="eager"
+                      decoding="async"
+                      draggable={false}
+                      aria-hidden
+                    />
+                  ) : null}
+                  <iframe
+                    title=""
+                    className="hero-reel__video hero-reel__embed"
+                    src={driveFilePreviewUrl(heroVideoProject.googleDriveFileId, { autoplay: !reduce })}
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </>
               ) : (
                 <video
                   className="hero-reel__video"
@@ -196,6 +209,14 @@ export function Hero({ heroVideoProject }) {
           aspect-ratio: 16 / 9;
           background: #000;
         }
+        .hero-reel__thumb {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          z-index: 0;
+        }
         .hero-reel__video {
           width: 100%;
           height: 100%;
@@ -203,6 +224,8 @@ export function Hero({ heroVideoProject }) {
         }
         .hero-reel__embed {
           border: 0;
+          position: relative;
+          z-index: 1;
         }
         .hero-reel__vignette {
           position: absolute;

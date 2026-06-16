@@ -24,10 +24,10 @@ export const siteConfig = {
     headline: "Have a project in mind?",
     subhead:
       "Let’s create something clear, engaging, and impossible to scroll past.",
-    /** TODO: replace with your email */
-    email: "your.email@example.com",
-    /** TODO: replace with your LinkedIn profile URL */
-    linkedinUrl: "https://www.linkedin.com/in/YOUR-LINKEDIN-ID/",
+    email: "capx86@gmail.com",
+    linkedinUrl: "https://www.linkedin.com/in/carlos-pe%C3%B1alo-9a797228a/",
+    /** E.164-friendly display; used for tel: (digits only) */
+    phone: "+1 849-220-6301",
     /** Optional — leave empty string to hide the Instagram button */
     instagramUrl: "",
     /**

@@ -12,6 +12,17 @@ export function driveFilePreviewUrl(fileId, options = {}) {
   return qs ? `${base}?${qs}` : base;
 }
 
+/**
+ * Static frame URL for cards / posters ("anyone with link" files usually work).
+ * Falls back gracefully if the file blocks thumbnails (handle `img` onError in UI).
+ */
+export function driveThumbnailUrl(fileId, maxWidth = 960) {
+  if (!fileId || typeof fileId !== "string") return "";
+  const id = fileId.trim();
+  const w = Math.min(Math.max(Number(maxWidth) || 960, 320), 2000);
+  return `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${w}`;
+}
+
 /** Extract file id from a Drive "open file" or /file/d/... URL. */
 export function parseDriveFileIdFromUrl(url) {
   if (!url || typeof url !== "string") return null;

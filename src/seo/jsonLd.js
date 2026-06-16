@@ -4,7 +4,7 @@ export function getPersonJsonLd() {
   const sameAs = [siteConfig.contact.linkedinUrl].filter(Boolean);
   if (siteConfig.contact.instagramUrl) sameAs.push(siteConfig.contact.instagramUrl);
 
-  return {
+  const person = {
     "@context": "https://schema.org",
     "@type": "Person",
     name: siteConfig.name,
@@ -14,4 +14,9 @@ export function getPersonJsonLd() {
     sameAs,
     knowsAbout: siteConfig.about.skills,
   };
+  if (siteConfig.contact.phone?.trim()) {
+    const digits = siteConfig.contact.phone.replace(/\D/g, "");
+    if (digits) person.telephone = `+${digits}`;
+  }
+  return person;
 }

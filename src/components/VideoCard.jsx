@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { usePreviewVideo } from "@/context/PreviewVideoContext.jsx";
 import { useHoverCapable } from "@/hooks/useHoverCapable.js";
-import { driveFilePreviewUrl } from "@/lib/googleDrive.js";
+import { driveFilePreviewUrl, driveThumbnailUrl } from "@/lib/googleDrive.js";
 
 export function VideoCard({ project, onOpen, variant = "grid" }) {
   const reduce = useReducedMotion();
@@ -11,15 +11,35 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
   const rootRef = useRef(null);
   const videoRef = useRef(null);
   const hoverTimerRef = useRef(null);
-  const [loaded, setLoaded] = useState(false);
+  const [nativeReady, setNativeReady] = useState(false);
+  const [thumbLoaded, setThumbLoaded] = useState(false);
+  const [thumbFailed, setThumbFailed] = useState(false);
   const [pointerOver, setPointerOver] = useState(false);
   const [focusWithin, setFocusWithin] = useState(false);
 
-  const inView = useInView(rootRef, { amount: 0.28, margin: "0px 0px -10% 0px" });
+  const inView = useInView(rootRef, { amount: 0.22, margin: "0px 0px -8% 0px" });
   const isDrive = Boolean(project.googleDriveFileId);
 
-  /** Desktop: load / play preview on hover or keyboard focus. Touch: when card is on screen. */
-  const previewActive = hoverCapable ? pointerOver || focusWithin : inView;
+  const thumbSrc =
+    (typeof project.poster === "string" && project.poster.trim()) ||
+    (project.googleDriveFileId ? driveThumbnailUrl(project.googleDriveFileId, 1200) : "");
+
+  /**
+   * Motion embed: touch = as soon as the card is on screen; desktop = in view + hover/focus
+   * (saves many simultaneous Drive iframes). Static "gif-like" frame always uses `thumbSrc`.
+   */
+  const wantDriveEmbed =
+    isDrive && inView && !reduce && (!hoverCapable || pointerOver || focusWithin);
+
+  const driveIframeSrc = wantDriveEmbed
+    ? driveFilePreviewUrl(project.googleDriveFileId, { autoplay: true })
+    : "";
+
+  useEffect(() => {
+    setThumbLoaded(false);
+    setThumbFailed(false);
+    setNativeReady(false);
+  }, [project.id]);
 
   useEffect(() => {
     if (isDrive) {
@@ -71,17 +91,8 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
 
   const featuredAspect = variant === "featured" ? "21 / 9" : null;
 
-  const driveIframeSrc =
-    isDrive && previewActive
-      ? driveFilePreviewUrl(project.googleDriveFileId, { autoplay: !reduce })
-      : "";
-
-  const showDriveIdle = isDrive && !driveIframeSrc;
-
-  useEffect(() => {
-    if (!isDrive) return;
-    if (!driveIframeSrc) setLoaded(false);
-  }, [driveIframeSrc, isDrive]);
+  const driveShowSkeleton = isDrive && thumbSrc && !thumbLoaded && !thumbFailed;
+  const driveIdleFallback = isDrive && thumbFailed && !driveIframeSrc;
 
   return (
     <article
@@ -98,28 +109,49 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
       >
         {isDrive ? (
           <>
+            {thumbSrc && !thumbFailed ? (
+              <img
+                className={`video-card__poster ${!reduce ? "video-card__poster--motion" : ""}`}
+                src={thumbSrc}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+                onLoad={() => setThumbLoaded(true)}
+                onError={() => {
+                  setThumbFailed(true);
+                  setThumbLoaded(true);
+                }}
+              />
+            ) : null}
+            {driveIdleFallback ? (
+              <div className="video-card__drive-idle" aria-hidden>
+                <span className="video-card__drive-idle__lines" />
+                <span className="video-card__drive-idle__glow" />
+              </div>
+            ) : null}
+            {!thumbSrc && !driveIframeSrc ? (
+              <div className="video-card__drive-idle" aria-hidden>
+                <span className="video-card__drive-idle__lines" />
+                <span className="video-card__drive-idle__glow" />
+              </div>
+            ) : null}
             {driveIframeSrc ? (
               <iframe
                 title=""
                 key={driveIframeSrc}
                 src={driveIframeSrc}
                 loading="lazy"
-                className="video-card__embed"
+                className="video-card__embed video-card__embed--layer"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
-                onLoad={() => setLoaded(true)}
               />
-            ) : (
-              <div className="video-card__drive-idle" aria-hidden>
-                <span className="video-card__drive-idle__lines" />
-                <span className="video-card__drive-idle__glow" />
-              </div>
-            )}
-            {!loaded && driveIframeSrc ? <div className="skeleton skeleton--embed" aria-hidden /> : null}
+            ) : null}
+            {driveShowSkeleton ? <div className="skeleton skeleton--embed" aria-hidden /> : null}
           </>
         ) : (
           <>
-            {!loaded ? <div className="skeleton" aria-hidden /> : null}
+            {!nativeReady ? <div className="skeleton" aria-hidden /> : null}
             <video
               ref={videoRef}
               src={project.src}
@@ -127,17 +159,14 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
               muted
               playsInline
               loop
-              preload="metadata"
+              preload="auto"
               loading="lazy"
               className="video-card__video"
-              onLoadedMetadata={() => setLoaded(true)}
+              onLoadedData={() => setNativeReady(true)}
             />
           </>
         )}
         <div className="video-card__shine" aria-hidden />
-        {showDriveIdle && hoverCapable ? (
-          <div className="video-card__idle-label">Hover to preview</div>
-        ) : null}
       </div>
 
       <div className="video-card__body">
@@ -166,6 +195,31 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
       />
 
       <style>{`
+        @keyframes videoCardKen {
+          from {
+            transform: scale(1) translate(0, 0);
+          }
+          to {
+            transform: scale(1.08) translate(-1.2%, -0.8%);
+          }
+        }
+        .video-card__poster {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          z-index: 0;
+          transform-origin: 50% 40%;
+        }
+        .video-card__poster--motion {
+          animation: videoCardKen 14s ease-in-out infinite alternate;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .video-card__poster--motion {
+            animation: none;
+          }
+        }
         .video-card--grid {
           flex: 1 1 auto;
           display: flex;
@@ -219,10 +273,17 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
           object-fit: cover;
           pointer-events: none;
         }
+        .video-card__embed--layer {
+          position: absolute;
+          inset: 0;
+          z-index: 3;
+          min-height: 0;
+        }
         .video-card__drive-idle {
           position: absolute;
           inset: 0;
           overflow: hidden;
+          z-index: 0;
         }
         .video-card__drive-idle__glow {
           position: absolute;
@@ -248,6 +309,7 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
         .video-card__shine {
           position: absolute;
           inset: 0;
+          z-index: 1;
           background: linear-gradient(
             125deg,
             rgba(255, 255, 255, 0.14) 0%,
@@ -264,22 +326,6 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
             opacity: 1;
           }
         }
-        .video-card__idle-label {
-          position: absolute;
-          right: var(--space-4);
-          bottom: var(--space-4);
-          font-size: 10px;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          color: rgba(255, 255, 255, 0.35);
-          pointer-events: none;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .video-card__idle-label {
-            display: none;
-          }
-        }
-        .video-card__body {
           position: relative;
           padding: var(--space-5) var(--space-5) var(--space-6);
           border-top: 1px solid rgba(255, 255, 255, 0.06);
@@ -312,12 +358,12 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
           background: transparent;
           cursor: pointer;
           border-radius: inherit;
-          z-index: 2;
+          z-index: 6;
         }
         .skeleton--embed {
           position: absolute;
           inset: 0;
-          z-index: 1;
+          z-index: 3;
           pointer-events: none;
         }
       `}</style>

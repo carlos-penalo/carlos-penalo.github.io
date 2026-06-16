@@ -5,6 +5,8 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   const showInstagram = Boolean(siteConfig.contact.instagramUrl?.trim());
+  const phone = typeof siteConfig.contact.phone === "string" ? siteConfig.contact.phone.trim() : "";
+  const phoneTel = phone ? `tel:+${phone.replace(/\D/g, "")}` : "";
 
   return (
     <footer className="footer">
@@ -23,6 +25,11 @@ export function Footer() {
             </a>
           ) : null}
           <a href={`mailto:${siteConfig.contact.email}`}>Email</a>
+          {phoneTel ? (
+            <a href={phoneTel}>
+              {phone}
+            </a>
+          ) : null}
         </div>
         <div className="footer-meta">
           <span>© {year}</span>

@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Copy, Instagram, Linkedin, Mail } from "lucide-react";
+import { Copy, Instagram, Linkedin, Mail, Phone } from "lucide-react";
 import { siteConfig } from "@/config/siteConfig.js";
 
 export function Contact() {
@@ -19,6 +19,8 @@ export function Contact() {
   };
 
   const showInstagram = Boolean(siteConfig.contact.instagramUrl?.trim());
+  const phone = typeof siteConfig.contact.phone === "string" ? siteConfig.contact.phone.trim() : "";
+  const phoneTel = phone ? `tel:+${phone.replace(/\D/g, "")}` : "";
 
   return (
     <section id="contact" className="section contact">
@@ -35,7 +37,13 @@ export function Contact() {
           <p className="section-lead">{siteConfig.contact.subhead}</p>
 
           <div className="contact-actions">
-            <a className="btn btn--primary" href={`mailto:${siteConfig.contact.email}`}>
+            {phoneTel ? (
+              <a className="btn btn--primary" href={phoneTel}>
+                <Phone size={18} aria-hidden />
+                {phone}
+              </a>
+            ) : null}
+            <a className={`btn ${phoneTel ? "btn--ghost" : "btn--primary"}`} href={`mailto:${siteConfig.contact.email}`}>
               <Mail size={18} aria-hidden />
               Email me
             </a>
