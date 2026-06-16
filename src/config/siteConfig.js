@@ -30,11 +30,8 @@ export const siteConfig = {
     phone: "+1 849-220-6301",
     /** Optional — leave empty string to hide the Instagram button */
     instagramUrl: "",
-    /**
-     * Formspree: create a form at https://formspree.io and paste the form endpoint here.
-     * Example: "https://formspree.io/f/xxxxxxxx"
-     */
-    formspreeEndpoint: "https://formspree.io/f/PLACEHOLDER_FORM_ID",
+    /** Formspree form endpoint (dashboard → Integration → form endpoint). */
+    formspreeEndpoint: "https://formspree.io/f/xvznlnel",
   },
 
   about: {

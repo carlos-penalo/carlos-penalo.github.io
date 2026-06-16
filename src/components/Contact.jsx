@@ -76,10 +76,7 @@ export function Contact() {
           viewport={{ once: true, margin: "-10% 0px" }}
           transition={{ duration: reduce ? 0 : 0.45, delay: reduce ? 0 : 0.05 }}
         >
-          <p className="form-note">
-            Form posts to Formspree. Replace <code>formspreeEndpoint</code> in{" "}
-            <code>src/config/siteConfig.js</code> with your form URL.
-          </p>
+          <p className="form-note">I’ll get back to you as soon as I can — usually within a couple of business days.</p>
           <label className="field">
             <span>Name</span>
             <input name="name" type="text" autoComplete="name" required />
@@ -132,10 +129,6 @@ export function Contact() {
           margin: 0;
           font-size: var(--text-sm);
           color: var(--text-muted);
-        }
-        .form-note code {
-          font-size: 0.9em;
-          color: var(--text);
         }
         .field {
           display: flex;
