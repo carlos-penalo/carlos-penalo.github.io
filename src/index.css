@@ -258,3 +258,34 @@ a:hover {
   white-space: nowrap;
   border: 0;
 }
+
+.error-boundary {
+  min-height: 100vh;
+  padding: var(--space-8);
+  background: var(--bg-deep);
+  color: var(--text);
+  font-family: var(--font-sans);
+  max-width: 52rem;
+  margin: 0 auto;
+}
+
+.error-boundary__title {
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-xl);
+}
+
+.error-boundary__lead,
+.error-boundary__hint {
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+.error-boundary__pre {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.45);
+  color: #ffb4b4;
+  overflow: auto;
+  font-size: var(--text-sm);
+}

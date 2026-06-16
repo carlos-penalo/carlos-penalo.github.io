@@ -6,7 +6,12 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  base: "/",
+  /**
+   * Relative base keeps asset URLs (./assets/...) resilient on GitHub Pages.
+   * For a user site at the domain root, "/" also works; "./" avoids occasional blank pages
+   * when absolute "/assets/..." requests are misrouted.
+   */
+  base: "./",
   plugins: [react()],
   resolve: {
     alias: {

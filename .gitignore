@@ -2,3 +2,12 @@ node_modules
 dist
 .DS_Store
 *.local
+
+# Video masters — keep them only on a CDN / cloud; use src/data/manualVideos.js with https URLs.
+/facebookAds/
+/saasAds/
+/simpleStyle/
+/talkingHeadMotionGraphics/
+/src/assets/videos/**/*.mp4
+/src/assets/videos/**/*.webm
+/src/assets/videos/**/*.mov
