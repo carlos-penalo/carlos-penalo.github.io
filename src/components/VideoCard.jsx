@@ -4,7 +4,7 @@ import { usePreviewVideo } from "@/context/PreviewVideoContext.jsx";
 import { useHoverCapable } from "@/hooks/useHoverCapable.js";
 import { driveFilePreviewUrl, driveThumbnailUrl } from "@/lib/googleDrive.js";
 
-export function VideoCard({ project, onOpen, variant = "grid" }) {
+export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnly = false }) {
   const reduce = useReducedMotion();
   const hoverCapable = useHoverCapable();
   const { register, pause, playPreview } = usePreviewVideo();
@@ -169,18 +169,18 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
         <div className="video-card__shine" aria-hidden />
       </div>
 
-      <div className="video-card__body">
+      <div className={`video-card__body ${footerCategoryOnly ? "video-card__body--cat-only" : ""}`}>
         <div>
-          <h3 className="video-card__title">{project.title}</h3>
-          <p className="video-card__cat">{project.category}</p>
-          {project.description ? <p className="video-card__desc">{project.description}</p> : null}
+          {!footerCategoryOnly ? <h3 className="video-card__title">{project.title}</h3> : null}
+          <p className={`video-card__cat ${footerCategoryOnly ? "video-card__cat--solo" : ""}`}>{project.category}</p>
+          {!footerCategoryOnly && project.description ? <p className="video-card__desc">{project.description}</p> : null}
         </div>
       </div>
 
       <motion.button
         type="button"
         className="video-card__hit"
-        aria-label={`Open ${project.title} in viewer`}
+        aria-label={footerCategoryOnly ? `Open ${project.category} piece in viewer` : `Open ${project.title} in viewer`}
         onClick={() => onOpen()}
         onMouseEnter={() => {
           setPointerOver(true);
@@ -326,10 +326,22 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
             opacity: 1;
           }
         }
+        .video-card__body {
           position: relative;
           padding: var(--space-5) var(--space-5) var(--space-6);
           border-top: 1px solid rgba(255, 255, 255, 0.06);
           background: linear-gradient(to bottom, rgba(8, 8, 10, 0.15), rgba(6, 6, 8, 0.96));
+        }
+        .video-card__body--cat-only {
+          padding: var(--space-4) var(--space-5);
+        }
+        .video-card__cat--solo {
+          margin: 0;
+          font-size: var(--text-sm);
+          letter-spacing: 0.16em;
+          font-weight: 600;
+          text-transform: uppercase;
+          color: var(--text-muted);
         }
         .video-card__title {
           margin: 0 0 var(--space-2);

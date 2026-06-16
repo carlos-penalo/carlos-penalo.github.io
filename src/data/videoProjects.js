@@ -187,6 +187,7 @@ function normalizeManualVideo(raw) {
     googleDriveFileId: driveId || null,
     poster: explicitPoster ?? posterFromDrive,
     featured: Boolean(raw.featured),
+    featuredOrder: typeof raw.featuredOrder === "number" ? raw.featuredOrder : null,
     order: typeof raw.order === "number" ? raw.order : 998,
   };
 }
@@ -214,6 +215,7 @@ function buildProjectEntry(rawPath, url) {
     googleDriveFileId: null,
     poster: override.poster ?? null,
     featured: Boolean(override.featured),
+    featuredOrder: typeof override.featuredOrder === "number" ? override.featuredOrder : null,
     order: typeof override.order === "number" ? override.order : 999,
   };
 }
@@ -249,6 +251,19 @@ function buildVideoProjects() {
 }
 
 export const videoProjects = buildVideoProjects();
+
+/** Featured strip order (lower first). Entries without `featuredOrder` sort after those that have it. */
+export function getFeaturedProjectsSorted(projects) {
+  return projects
+    .filter((p) => p.featured)
+    .sort((a, b) => {
+      const ao = typeof a.featuredOrder === "number" ? a.featuredOrder : 999;
+      const bo = typeof b.featuredOrder === "number" ? b.featuredOrder : 999;
+      if (ao !== bo) return ao - bo;
+      if (a.order !== b.order) return a.order - b.order;
+      return a.title.localeCompare(b.title);
+    });
+}
 
 export function getCategoryCounts(projects) {
   const counts = {};

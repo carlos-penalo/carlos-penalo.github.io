@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { PreviewVideoProvider } from "@/context/PreviewVideoContext.jsx";
 import { siteConfig } from "@/config/siteConfig.js";
-import { videoProjects, getCategoryCounts } from "@/data/videoProjects.js";
+import { videoProjects, getCategoryCounts, getFeaturedProjectsSorted } from "@/data/videoProjects.js";
 import { getPersonJsonLd } from "@/seo/jsonLd.js";
 import { Navbar } from "@/components/Navbar.jsx";
 import { Hero } from "@/components/Hero.jsx";
@@ -25,10 +25,10 @@ export default function App() {
 
   const counts = useMemo(() => getCategoryCounts(videoProjects), []);
 
-  const heroVideo = useMemo(
-    () => videoProjects.find((p) => p.featured) ?? videoProjects[0] ?? null,
-    []
-  );
+  const heroVideo = useMemo(() => {
+    const featured = getFeaturedProjectsSorted(videoProjects);
+    return featured[0] ?? videoProjects[0] ?? null;
+  }, []);
 
   const openModal = (project, playlist) => {
     const list = Array.isArray(playlist) && playlist.length ? playlist : videoProjects;

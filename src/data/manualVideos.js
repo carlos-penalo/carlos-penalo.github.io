@@ -2,7 +2,7 @@
  * Portfolio clips embedded from Google Drive (`/file/d/ID/preview` iframes).
  * Paste the normal “Share” link per file (`…/file/d/…/view?usp=sharing`).
  *
- * Optional: `featured`, `order`, `description`, `poster`, explicit `id`, `filename`.
+ * Optional: `featured`, `featuredOrder` (1 = first in Featured work), `order`, `description`, `poster`, `id`, `filename`.
  */
 export const manualVideoProjects = [
   // --- Facebook Ads ---
@@ -16,12 +16,16 @@ export const manualVideoProjects = [
     title: "Direct Meds",
     category: "Facebook Ads",
     driveViewUrl: "https://drive.google.com/file/d/1KjnBDXoZaNBgPFuJ-EpQiKAxAijj1HXx/view?usp=sharing",
+    featured: true,
+    featuredOrder: 2,
     order: 2,
   },
   {
     title: "FakeMoney Real Lambo",
     category: "Facebook Ads",
     driveViewUrl: "https://drive.google.com/file/d/1zMyPIjqfvJodxq_li29hfQhqe18AM00u/view?usp=sharing",
+    featured: true,
+    featuredOrder: 3,
     order: 3,
   },
   {
@@ -72,7 +76,6 @@ export const manualVideoProjects = [
     title: "99x SaaS",
     category: "SaaS ADS",
     driveViewUrl: "https://drive.google.com/file/d/1ra-ZEyZwMtqhq5-Ifl2dwAo-p_8D8M76/view?usp=sharing",
-    featured: true,
     order: 11,
   },
   {
@@ -119,6 +122,8 @@ export const manualVideoProjects = [
     title: "Talking Head 1",
     category: "Talking Head Motion Graphics",
     driveViewUrl: "https://drive.google.com/file/d/1kLw5T0I3QAOozRwYmjQz_BC42nJjBA8W/view?usp=sharing",
+    featured: true,
+    featuredOrder: 1,
     order: 30,
   },
   {

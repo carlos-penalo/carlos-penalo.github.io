@@ -1,9 +1,10 @@
 import { motion, useReducedMotion } from "framer-motion";
+import { getFeaturedProjectsSorted } from "@/data/videoProjects.js";
 import { FeaturedVideoCard } from "./FeaturedVideoCard.jsx";
 
 export function FeaturedWork({ projects, onOpenProject }) {
   const reduce = useReducedMotion();
-  const featured = projects.filter((p) => p.featured);
+  const featured = getFeaturedProjectsSorted(projects);
 
   return (
     <section id="work" className="section featured">
@@ -17,8 +18,8 @@ export function FeaturedWork({ projects, onOpenProject }) {
         {featured.length === 0 ? (
           <div className="featured-empty glass">
             <p className="muted">
-              No featured videos yet. In <code>src/data/videoProjects.js</code>, add{" "}
-              <code>featured: true</code> to entries inside <code>projectOverrides</code> (keyed by filename).
+              No featured videos yet. In <code>src/data/manualVideos.js</code>, set{" "}
+              <code>featured: true</code> (and optional <code>featuredOrder</code>) on the clips you want here.
             </p>
           </div>
         ) : (
