@@ -1,49 +1,42 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { Clapperboard, MessageCircle, Rocket, Send } from "lucide-react";
 import { siteConfig } from "@/config/siteConfig.js";
-
-const icons = [MessageCircle, Clapperboard, Rocket, Send];
 
 export function Process() {
   const reduce = useReducedMotion();
-  const steps = siteConfig.process.map((s, i) => ({
-    ...s,
-    icon: icons[i] ?? MessageCircle,
-  }));
+  const { process, processSection } = siteConfig;
 
   return (
     <section id="process" className="section process">
       <div className="container">
-        <p className="eyebrow">How it flows</p>
-        <h2 className="section-title">Process</h2>
-        <p className="section-lead">A simple loop that keeps projects moving without surprises.</p>
+        <p className="eyebrow">{processSection.eyebrow}</p>
+        <h2 className="section-title">{processSection.title}</h2>
+        <p className="section-lead process-lead">{processSection.lead}</p>
 
         <ol className="process-track">
-          {steps.map((s, i) => {
-            const Icon = s.icon;
-            return (
-              <motion.li
-                key={s.title}
-                className="process-step glass"
-                initial={reduce ? false : { opacity: 0, y: 12 }}
-                whileInView={reduce ? false : { opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-12% 0px" }}
-                transition={{ duration: reduce ? 0 : 0.4, delay: reduce ? 0 : i * 0.07 }}
-              >
-                <div className="process-step__icon" aria-hidden>
-                  <Icon size={20} strokeWidth={1.75} />
-                </div>
-                <div>
-                  <h3 className="process-step__title">{s.title}</h3>
-                  <p className="process-step__desc">{s.description}</p>
-                </div>
-                {i < steps.length - 1 ? <span className="process-connector" aria-hidden /> : null}
-              </motion.li>
-            );
-          })}
+          {process.map((s, i) => (
+            <motion.li
+              key={s.title}
+              className="process-step glass"
+              initial={reduce ? false : { opacity: 0, y: 12 }}
+              whileInView={reduce ? false : { opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-12% 0px" }}
+              transition={{ duration: reduce ? 0 : 0.4, delay: reduce ? 0 : i * 0.07 }}
+            >
+              <span className="process-step__num" aria-hidden>
+                {s.step}
+              </span>
+              <div className="process-step__copy">
+                <h3 className="process-step__title">{s.title}</h3>
+                <p className="process-step__desc">{s.description}</p>
+              </div>
+            </motion.li>
+          ))}
         </ol>
       </div>
       <style>{`
+        .process-lead {
+          margin-bottom: var(--space-10);
+        }
         .process-track {
           list-style: none;
           padding: 0;
@@ -74,41 +67,33 @@ export function Process() {
             min-height: 100%;
           }
         }
-        .process-step__icon {
-          width: 44px;
-          height: 44px;
-          border-radius: 14px;
+        .process-step__num {
+          flex-shrink: 0;
+          font-size: var(--text-xs);
+          font-weight: 700;
+          letter-spacing: 0.14em;
+          color: var(--accent);
+          width: 2.5rem;
+          height: 2.5rem;
           display: grid;
           place-items: center;
-          border: 1px solid var(--border);
-          background: rgba(255, 255, 255, 0.04);
-          color: var(--accent);
-          flex-shrink: 0;
+          border-radius: 12px;
+          border: 1px solid rgba(124, 156, 255, 0.35);
+          background: rgba(124, 156, 255, 0.08);
+        }
+        .process-step__copy {
+          min-width: 0;
         }
         .process-step__title {
           margin: 0 0 var(--space-2);
           font-size: var(--text-base);
+          font-weight: 650;
         }
         .process-step__desc {
           margin: 0;
           color: var(--text-muted);
           font-size: var(--text-sm);
-        }
-        .process-connector {
-          display: none;
-        }
-        @media (min-width: 900px) {
-          .process-connector {
-            display: block;
-            position: absolute;
-            top: 50%;
-            right: -14px;
-            width: 28px;
-            height: 2px;
-            background: linear-gradient(90deg, rgba(124, 156, 255, 0.1), rgba(124, 156, 255, 0.55), rgba(124, 156, 255, 0.1));
-            transform: translateY(-50%);
-            z-index: 2;
-          }
+          line-height: 1.55;
         }
       `}</style>
     </section>

@@ -1,69 +1,217 @@
 /**
- * Site-wide copy and links. Replace placeholders marked with TODO.
+ * Site copy & structure. Layout/visual language inspired by portfolio templates
+ * like CreatorCut (Framer) — not a pixel copy; all content is yours to edit.
  */
 
 export const siteConfig = {
-  /** TODO: verify spelling / branding */
   name: "Carlos Peñalo",
   role: "Video Editor",
 
   siteUrl: "https://carlos-penalo.github.io",
-
-  /** TODO: add absolute URL to an OG image in /public/ when ready */
   ogImageUrl: "",
 
-  hero: {
-    headline: "Video Editing That Keeps People Watching.",
-    subhead:
-      "I create engaging motion graphics, SaaS ads, talking-head videos, and performance-driven social media content.",
-    primaryCta: "View My Work",
-    secondaryCta: "Contact Me",
-  },
-
-  contact: {
-    headline: "Have a project in mind?",
-    subhead:
-      "Let’s create something clear, engaging, and impossible to scroll past.",
-    email: "capx86@gmail.com",
-    linkedinUrl: "https://www.linkedin.com/in/carlos-pe%C3%B1alo-9a797228a/",
-    /** E.164-friendly display; used for tel: (digits only) */
-    phone: "+1 849-220-6301",
-    /** Optional — leave empty string to hide the Instagram button */
-    instagramUrl: "",
-    /** Formspree form endpoint (dashboard → Integration → form endpoint). */
-    formspreeEndpoint: "https://formspree.io/f/xvznlnel",
-  },
-
-  about: {
-    intro:
-      "I’m a video editor with 3+ years of experience creating engaging short-form content for brands, businesses, and creators.",
-    body: [
-      "I specialize in transforming ideas, scripts, and raw footage into polished videos designed to capture attention and communicate a clear message. My experience covers a wide range of formats, including UGC videos, talking-head content, disruptive Meta ads, promotional campaigns, street interviews, SaaS product videos, and motion-design-driven content.",
-      "I can adapt to both clean, simple editing styles and more complex productions involving custom animations, motion graphics, dynamic typography, visual effects, and detailed sound design.",
-      "I work primarily with Adobe After Effects and Premiere Pro, handling the full post-production process—from pacing and storytelling to animation, audio enhancement, sound effects, transitions, and final delivery.",
-      "My goal is always to create content that looks professional, holds attention, supports the brand’s identity, and delivers results.",
+  /** Top navigation (desktop + mobile panel). */
+  nav: {
+    links: [
+      { href: "#work", label: "Work" },
+      { href: "#services", label: "Services" },
+      { href: "#portfolio", label: "Projects" },
+      { href: "#process", label: "Process" },
+      { href: "#about", label: "About" },
     ],
-    skills: [
-      "Motion graphics",
-      "Social media advertising",
-      "SaaS product videos",
-      "Talking-head editing",
-      "Storytelling",
-      "Sound design",
+    cta: { href: "#contact", label: "Book call" },
+  },
+
+  hero: {
+    urgency: "Hurry — limited spots this month.",
+    headline: "Editing that",
+    headlineAccent: "holds attention.",
+    subhead:
+      "Motion graphics, SaaS spots, talking-head packages, and performance-first social cuts — tuned for clarity, pace, and retention.",
+    primaryCta: "View work",
+    secondaryCta: "Get in touch",
+    statValue: "3+",
+    statLabel: "Years shipping edits for brands & creators",
+  },
+
+  /** Horizontal “services” strip (CreatorCut-style cards). */
+  services: {
+    eyebrow: "Services",
+    title: "What I take on",
+    lead: "End-to-end post for campaigns and channels — from rough cut to polished master.",
+    items: [
+      {
+        title: "Motion & social ads",
+        body: "Scroll-stopping Meta ads, hooks, captions-on-brand, and motion passes that survive testing at scale.",
+        cta: "See ads",
+        href: "#portfolio",
+      },
+      {
+        title: "SaaS & explainers",
+        body: "Product-led story, UI capture, supers, and clean pacing so features read fast on a landing page or demo.",
+        cta: "See SaaS",
+        href: "#portfolio",
+      },
+      {
+        title: "Talking-head + GFX",
+        body: "Punchy A-roll, lower thirds, chapter beats, and graphics that keep long-form watchable start to finish.",
+        cta: "See samples",
+        href: "#portfolio",
+      },
+      {
+        title: "Finish & delivery",
+        body: "Sound polish, mix, loudness-safe exports, and delivery specs matched to YouTube, Meta, or internal review.",
+        cta: "Process",
+        href: "#process",
+      },
+    ],
+  },
+
+  featuredWork: {
+    eyebrow: "Projects",
+    title: "Selected editing work",
+    lead: "A mix of formats — open any piece for full playback.",
+  },
+
+  portfolioTeaser: {
+    eyebrow: "Browse",
+    title: "Filter by category",
+    lead: "Tap a lane to refocus the grid. Everything updates in place.",
+  },
+
+  whyMe: {
+    eyebrow: "Why me",
+    title: 'More than just "cutting" footage.',
+    lead: "Every frame is shaped with intention — pacing, motion, color, and sound working together.",
+    pillars: [
+      {
+        title: "Retention-first",
+        body: "Edits structured so the message lands before thumbs scroll away.",
+      },
+      {
+        title: "Platform-native",
+        body: "Layouts and rhythm tuned for feeds, demos, and long-form — not one-size-fits-all.",
+      },
+      {
+        title: "Predictable delivery",
+        body: "Clear milestones, organized assets, and exports that match your review chain.",
+      },
+    ],
+  },
+
+  stats: {
+    eyebrow: "Numbers",
+    title: "At a glance",
+    items: [
+      { value: "3+", label: "Years editing" },
+      { value: "24+", label: "Clips in this portfolio" },
+      { value: "100%", label: "Remote-friendly" },
+      { value: "AE + PR", label: "Primary toolchain" },
+    ],
+  },
+
+  testimonials: {
+    eyebrow: "Testimonials",
+    title: "Trusted by teams",
+    lead: "Placeholder quotes — swap for real client feedback when you have permission.",
+    items: [
+      {
+        name: "Brand lead",
+        quote: "Clear storytelling and fast iterations — the ads shipped on time for our launch window.",
+      },
+      {
+        name: "Marketing manager",
+        quote: "Motion passes elevated our SaaS demo without feeling busy. Exactly what we needed for paid social.",
+      },
+      {
+        name: "Creator",
+        quote: "Talking-head episodes finally feel tight. Viewers stay through the CTA.",
+      },
+    ],
+  },
+
+  faq: {
+    eyebrow: "FAQ",
+    title: "Common questions",
+    lead: "Quick answers — email me for specifics on your timeline and scope.",
+    items: [
+      {
+        q: "What do you need to start?",
+        a: "Brief, references, script or outline, and a shared drive (or links) with usable footage and brand assets.",
+      },
+      {
+        q: "How do revisions work?",
+        a: "We align on a direction early, then iterate in focused rounds so feedback stays actionable.",
+      },
+      {
+        q: "Can you match an existing style?",
+        a: "Yes — send reference edits or brand guidelines and I’ll match pacing, typography, and motion language.",
+      },
+      {
+        q: "Typical turnaround?",
+        a: "Depends on length and complexity; short social cuts are usually faster than long-form packages. Ask with your dates.",
+      },
     ],
   },
 
   process: [
-    { title: "Brief", description: "Goals, audience, references, and deliverables aligned up front." },
-    { title: "Edit", description: "Pacing, structure, graphics, sound, and polish in the timeline." },
-    { title: "Feedback", description: "Focused revisions until the cut matches the vision." },
-    { title: "Delivery", description: "Final exports and specs ready for publishing." },
+    {
+      step: "01",
+      title: "Brief & assets",
+      description: "Goals, audience, references, and a clean handoff of footage and brand rules.",
+    },
+    {
+      step: "02",
+      title: "Edit & motion",
+      description: "Structure, pacing, graphics, captions, and sound design in the timeline.",
+    },
+    {
+      step: "03",
+      title: "Feedback",
+      description: "Focused revision rounds until the cut matches the agreed direction.",
+    },
+    {
+      step: "04",
+      title: "Delivery",
+      description: "Masters and variants exported for the platforms you publish on.",
+    },
   ],
 
-  /**
-   * Category ids must stay in sync with folder names under src/assets/videos/
-   * and with overrides in src/data/videoProjects.js
-   */
+  about: {
+    eyebrow: "About",
+    title: "About me",
+    intro:
+      "I’m a video editor focused on turning scripts and footage into edits people actually finish — for brands, SaaS, and creators.",
+    body: [
+      "I specialize in motion-forward social ads, product explainers, talking-head packages, and polished short-form. The through-line is clarity: what should the viewer feel, know, or do next?",
+      "I work in After Effects and Premiere Pro — from rough assembly to GFX, mix prep, and final exports that match your review workflow.",
+    ],
+    skills: [
+      "Motion graphics",
+      "Social / Meta ads",
+      "SaaS explainers",
+      "Talking-head",
+      "Sound design",
+      "Delivery specs",
+    ],
+  },
+
+  processSection: {
+    eyebrow: "Process",
+    title: "From raw file to render",
+    lead: "A straightforward path so projects stay predictable.",
+  },
+
+  contact: {
+    headline: "Book a call",
+    subhead: "Tell me about your timeline, platforms, and what “done” looks like — I’ll reply with next steps.",
+    email: "capx86@gmail.com",
+    linkedinUrl: "https://www.linkedin.com/in/carlos-pe%C3%B1alo-9a797228a/",
+    phone: "+1 849-220-6301",
+    instagramUrl: "",
+    formspreeEndpoint: "https://formspree.io/f/xvznlnel",
+  },
+
   categories: [
     {
       id: "Talking Head Motion Graphics",

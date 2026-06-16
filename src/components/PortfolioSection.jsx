@@ -3,7 +3,7 @@ import { PortfolioGrid } from "./PortfolioGrid.jsx";
 
 export function PortfolioSection({ projects, activeFilter, onFilterChange, onOpenProject }) {
   return (
-    <section className="section portfolio-section">
+    <section id="portfolio" className="section portfolio-section">
       <div className="container">
         <CategoryFilters activeFilter={activeFilter} onChange={onFilterChange} projectCount={projects.length} />
         {projects.length === 0 ? (

@@ -5,13 +5,18 @@ import { videoProjects, getCategoryCounts, getFeaturedProjectsSorted } from "@/d
 import { getPersonJsonLd } from "@/seo/jsonLd.js";
 import { Navbar } from "@/components/Navbar.jsx";
 import { Hero } from "@/components/Hero.jsx";
-import { FeaturedWork } from "@/components/FeaturedWork.jsx";
-import { CategoryShowcase } from "@/components/CategoryShowcase.jsx";
-import { PortfolioSection } from "@/components/PortfolioSection.jsx";
 import { About } from "@/components/About.jsx";
-import { Process } from "@/components/Process.jsx";
+import { CategoryShowcase } from "@/components/CategoryShowcase.jsx";
 import { Contact } from "@/components/Contact.jsx";
+import { FAQ } from "@/components/FAQ.jsx";
+import { FeaturedWork } from "@/components/FeaturedWork.jsx";
 import { Footer } from "@/components/Footer.jsx";
+import { PortfolioSection } from "@/components/PortfolioSection.jsx";
+import { Process } from "@/components/Process.jsx";
+import { Services } from "@/components/Services.jsx";
+import { StatsStrip } from "@/components/StatsStrip.jsx";
+import { Testimonials } from "@/components/Testimonials.jsx";
+import { WhyMe } from "@/components/WhyMe.jsx";
 import { VideoModal } from "@/components/VideoModal.jsx";
 
 export default function App() {
@@ -74,7 +79,9 @@ export default function App() {
       <Navbar />
       <main>
         <Hero heroVideoProject={heroVideo} />
+        <Services />
         <FeaturedWork projects={videoProjects} onOpenProject={openModal} />
+        <WhyMe />
         <CategoryShowcase counts={counts} activeFilter={filter} onSelectCategory={handleCategoryPick} />
         <PortfolioSection
           projects={filtered}
@@ -82,9 +89,12 @@ export default function App() {
           onFilterChange={setFilter}
           onOpenProject={openModal}
         />
+        <StatsStrip />
         <About />
         <Process />
+        <Testimonials />
         <Contact />
+        <FAQ />
       </main>
       <Footer />
       <VideoModal

@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
+import { siteConfig } from "@/config/siteConfig.js";
 import { getFeaturedProjectsSorted } from "@/data/videoProjects.js";
 import { FeaturedVideoCard } from "./FeaturedVideoCard.jsx";
 
@@ -9,11 +10,9 @@ export function FeaturedWork({ projects, onOpenProject }) {
   return (
     <section id="work" className="section featured section--featured-mobile">
       <div className="container">
-        <p className="eyebrow">Selected cuts</p>
-        <h2 className="section-title">Featured work</h2>
-        <p className="section-lead">
-          A curated mix across categories — open any piece for full detail and playback.
-        </p>
+        <p className="eyebrow">{siteConfig.featuredWork.eyebrow}</p>
+        <h2 className="section-title">{siteConfig.featuredWork.title}</h2>
+        <p className="section-lead featured-lead">{siteConfig.featuredWork.lead}</p>
 
         {featured.length === 0 ? (
           <div className="featured-empty glass">
@@ -55,6 +54,14 @@ export function FeaturedWork({ projects, onOpenProject }) {
             margin: 0 0 var(--space-10);
             font-size: var(--text-base);
             max-width: 62ch;
+          }
+        }
+        .featured .section-lead.featured-lead {
+          margin-bottom: var(--space-8);
+        }
+        @media (min-width: 640px) {
+          .featured .section-lead.featured-lead {
+            margin-bottom: var(--space-10);
           }
         }
         .featured-grid {

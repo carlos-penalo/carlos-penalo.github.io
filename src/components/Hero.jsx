@@ -9,6 +9,7 @@ function scrollToId(id) {
 
 export function Hero({ heroVideoProject }) {
   const reduce = useReducedMotion();
+  const h = siteConfig.hero;
 
   return (
     <section id="top" className="hero section section--tight-top">
@@ -29,18 +30,27 @@ export function Hero({ heroVideoProject }) {
           animate={reduce ? false : { opacity: 1, y: 0 }}
           transition={{ duration: reduce ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="eyebrow">Portfolio</p>
-          <h1 className="hero-title">{siteConfig.hero.headline}</h1>
-          <p className="hero-sub">{siteConfig.hero.subhead}</p>
+          {h.urgency ? <p className="hero-urgency">{h.urgency}</p> : null}
+          <h1 className="hero-title">
+            <span className="hero-title__a">{h.headline}</span>{" "}
+            <span className="hero-title__b">{h.headlineAccent}</span>
+          </h1>
+          <p className="hero-sub">{h.subhead}</p>
           <div className="hero-actions">
             <button type="button" className="btn btn--primary" onClick={() => scrollToId("work")}>
-              {siteConfig.hero.primaryCta}
+              {h.primaryCta}
               <ArrowRight size={18} aria-hidden />
             </button>
             <button type="button" className="btn btn--ghost" onClick={() => scrollToId("contact")}>
-              {siteConfig.hero.secondaryCta}
+              {h.secondaryCta}
             </button>
           </div>
+          {h.statValue ? (
+            <div className="hero-stat glass" aria-label={`${h.statValue} ${h.statLabel}`}>
+              <span className="hero-stat__value">{h.statValue}</span>
+              <span className="hero-stat__label">{h.statLabel}</span>
+            </div>
+          ) : null}
         </motion.div>
 
         {heroVideoProject && (
@@ -94,7 +104,7 @@ export function Hero({ heroVideoProject }) {
               )}
               <div className="hero-reel__vignette" aria-hidden />
             </div>
-            <p className="hero-reel__caption">{heroVideoProject.title}</p>
+            <p className="hero-reel__caption">{heroVideoProject.category}</p>
           </motion.div>
         )}
       </div>
@@ -143,11 +153,6 @@ export function Hero({ heroVideoProject }) {
           border-radius: 999px;
           background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
         }
-        @media (prefers-reduced-motion: reduce) {
-          .hero-bg__tracks span {
-            animation: none;
-          }
-        }
         .hero-inner {
           position: relative;
           display: grid;
@@ -156,26 +161,67 @@ export function Hero({ heroVideoProject }) {
         }
         @media (min-width: 960px) {
           .hero-inner {
-            grid-template-columns: 1.1fr 0.9fr;
+            grid-template-columns: 1.05fr 0.95fr;
           }
         }
+        .hero-urgency {
+          margin: 0 0 var(--space-4);
+          font-size: var(--text-xs);
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--accent);
+          font-weight: 600;
+        }
         .hero-title {
-          font-size: var(--text-3xl);
-          line-height: 1.05;
-          letter-spacing: -0.03em;
+          font-size: clamp(2.1rem, 6vw, 3.75rem);
+          line-height: 1.02;
+          letter-spacing: -0.035em;
           margin: 0 0 var(--space-4);
           font-weight: 650;
+        }
+        .hero-title__a {
+          color: var(--text);
+        }
+        .hero-title__b {
+          color: rgba(244, 244, 246, 0.92);
+          background: linear-gradient(120deg, #fff 0%, rgba(124, 156, 255, 0.95) 45%, rgba(124, 156, 255, 0.65) 100%);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
         }
         .hero-sub {
           margin: 0 0 var(--space-8);
           color: var(--text-muted);
-          font-size: var(--text-lg);
+          font-size: clamp(1rem, 2.8vw, var(--text-lg));
           max-width: 52ch;
+          line-height: 1.55;
         }
         .hero-actions {
           display: flex;
           flex-wrap: wrap;
           gap: var(--space-3);
+        }
+        .hero-stat {
+          margin-top: var(--space-8);
+          display: inline-flex;
+          align-items: center;
+          gap: var(--space-4);
+          padding: var(--space-3) var(--space-5);
+          border-radius: 999px;
+          border: 1px solid var(--border);
+          max-width: 100%;
+        }
+        .hero-stat__value {
+          font-size: var(--text-xl);
+          font-weight: 750;
+          letter-spacing: -0.03em;
+        }
+        .hero-stat__label {
+          font-size: var(--text-xs);
+          color: var(--text-muted);
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          line-height: 1.35;
         }
         .hero-reel {
           border-radius: var(--radius-lg);
@@ -237,7 +283,9 @@ export function Hero({ heroVideoProject }) {
         .hero-reel__caption {
           margin: 0;
           padding: var(--space-4);
-          font-size: var(--text-sm);
+          font-size: var(--text-xs);
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
           color: var(--text-muted);
           border-top: 1px solid var(--border);
         }

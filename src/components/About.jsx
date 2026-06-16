@@ -13,8 +13,8 @@ export function About() {
           viewport={{ once: true, margin: "-10% 0px" }}
           transition={{ duration: reduce ? 0 : 0.45 }}
         >
-          <p className="eyebrow">Profile</p>
-          <h2 className="section-title">About</h2>
+          <p className="eyebrow">{siteConfig.about.eyebrow}</p>
+          <h2 className="section-title">{siteConfig.about.title}</h2>
           <p className="lead">{siteConfig.about.intro}</p>
           {siteConfig.about.body.map((para, idx) => (
             <p key={idx} className="para">

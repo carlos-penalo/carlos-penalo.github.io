@@ -8,11 +8,9 @@ export function CategoryShowcase({ counts, activeFilter, onSelectCategory }) {
   return (
     <section id="categories" className="section categories">
       <div className="container">
-        <p className="eyebrow">Browse</p>
-        <h2 className="section-title">Categories</h2>
-        <p className="section-lead">
-          Pick a lane to filter the portfolio. Everything updates in place — no page reloads.
-        </p>
+        <p className="eyebrow">{siteConfig.portfolioTeaser.eyebrow}</p>
+        <h2 className="section-title">{siteConfig.portfolioTeaser.title}</h2>
+        <p className="section-lead">{siteConfig.portfolioTeaser.lead}</p>
 
         <div className="cat-grid">
           {siteConfig.categories.map((cat, i) => {

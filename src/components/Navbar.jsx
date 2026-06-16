@@ -3,13 +3,6 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { siteConfig } from "@/config/siteConfig.js";
 
-const links = [
-  { href: "#work", label: "Work" },
-  { href: "#categories", label: "Categories" },
-  { href: "#about", label: "About" },
-  { href: "#contact", label: "Contact" },
-];
-
 function scrollToHash(hash) {
   const id = hash.replace("#", "");
   const el = document.getElementById(id);
@@ -21,6 +14,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const panelRef = useRef(null);
   const firstLinkRef = useRef(null);
+  const { nav } = siteConfig;
 
   useEffect(() => {
     if (!open) return;
@@ -94,7 +88,7 @@ export function Navbar() {
         </a>
 
         <nav className="nav-desktop" aria-label="Primary">
-          {links.map((l) => (
+          {nav.links.map((l) => (
             <a
               key={l.href}
               href={l.href}
@@ -107,11 +101,15 @@ export function Navbar() {
               {l.label}
             </a>
           ))}
-          <a className="btn btn--primary nav-cta" href="#contact" onClick={(e) => {
-            e.preventDefault();
-            scrollToHash("#contact");
-          }}>
-            Let&apos;s Work Together
+          <a
+            className="btn btn--primary nav-cta"
+            href={nav.cta.href}
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToHash(nav.cta.href);
+            }}
+          >
+            {nav.cta.label}
           </a>
         </nav>
 
@@ -142,17 +140,17 @@ export function Navbar() {
             transition={{ duration: reduce ? 0 : 0.22 }}
           >
             <div className="nav-mobile-links">
-              {links.map((l, i) => navLink(l.href, l.label, i === 0))}
+              {nav.links.map((l, i) => navLink(l.href, l.label, i === 0))}
               <a
                 className="btn btn--primary nav-mobile-cta"
-                href="#contact"
+                href={nav.cta.href}
                 onClick={(e) => {
                   e.preventDefault();
-                  scrollToHash("#contact");
+                  scrollToHash(nav.cta.href);
                   closeMenu();
                 }}
               >
-                Let&apos;s Work Together
+                {nav.cta.label}
               </a>
             </div>
           </motion.div>
@@ -196,7 +194,7 @@ export function Navbar() {
         .nav-desktop {
           display: none;
           align-items: center;
-          gap: var(--space-5);
+          gap: var(--space-4);
         }
         @media (min-width: 960px) {
           .nav-desktop {
@@ -218,7 +216,8 @@ export function Navbar() {
           background: rgba(255, 255, 255, 0.06);
         }
         .nav-cta {
-          padding-inline: var(--space-6);
+          padding-inline: var(--space-5);
+          text-transform: capitalize;
         }
         .nav-burger {
           display: inline-flex;
@@ -258,6 +257,7 @@ export function Navbar() {
         .nav-mobile-cta {
           margin-top: var(--space-2);
           width: 100%;
+          text-transform: capitalize;
         }
       `}</style>
     </header>
