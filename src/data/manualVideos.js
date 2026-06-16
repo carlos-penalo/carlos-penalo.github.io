@@ -10,7 +10,6 @@ export const manualVideoProjects = [
     title: "Carzing Ad 2",
     category: "Facebook Ads",
     driveViewUrl: "https://drive.google.com/file/d/1LnqOC-tkem0m-HOGC6NtiBOX_I60SKEW/view?usp=sharing",
-    featured: true,
     order: 1,
   },
   {
@@ -73,6 +72,7 @@ export const manualVideoProjects = [
     title: "99x SaaS",
     category: "SaaS ADS",
     driveViewUrl: "https://drive.google.com/file/d/1ra-ZEyZwMtqhq5-Ifl2dwAo-p_8D8M76/view?usp=sharing",
+    featured: true,
     order: 11,
   },
   {

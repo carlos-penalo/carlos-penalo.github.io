@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { siteConfig } from "@/config/siteConfig.js";
 import { driveFilePreviewUrl } from "@/lib/googleDrive.js";
 
@@ -61,7 +61,7 @@ export function Hero({ heroVideoProject }) {
                 <iframe
                   title=""
                   className="hero-reel__video hero-reel__embed"
-                  src={driveFilePreviewUrl(heroVideoProject.googleDriveFileId)}
+                  src={driveFilePreviewUrl(heroVideoProject.googleDriveFileId, { autoplay: !reduce })}
                   loading="lazy"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
@@ -76,11 +76,10 @@ export function Hero({ heroVideoProject }) {
                   loop
                   preload="metadata"
                   controls={false}
+                  autoPlay={!reduce}
                 />
               )}
-              <div className="hero-reel__overlay" aria-hidden>
-                <Play size={28} />
-              </div>
+              <div className="hero-reel__vignette" aria-hidden />
             </div>
             <p className="hero-reel__caption">{heroVideoProject.title}</p>
           </motion.div>
@@ -204,16 +203,13 @@ export function Hero({ heroVideoProject }) {
         }
         .hero-reel__embed {
           border: 0;
-          pointer-events: none;
         }
-        .hero-reel__overlay {
+        .hero-reel__vignette {
           position: absolute;
           inset: 0;
-          display: grid;
-          place-items: center;
-          color: rgba(255, 255, 255, 0.85);
-          background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent 55%);
           pointer-events: none;
+          background: linear-gradient(to top, rgba(0, 0, 0, 0.45), transparent 50%),
+            radial-gradient(ellipse 80% 60% at 50% 40%, transparent 40%, rgba(0, 0, 0, 0.25));
         }
         .hero-reel__caption {
           margin: 0;

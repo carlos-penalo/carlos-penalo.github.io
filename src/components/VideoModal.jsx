@@ -125,7 +125,7 @@ export function VideoModal({ open, playlist, activeIndex, onClose, onNavigate })
                 <iframe
                   key={project.id}
                   title={project.title}
-                  src={driveFilePreviewUrl(project.googleDriveFileId)}
+                  src={driveFilePreviewUrl(project.googleDriveFileId, { autoplay: !reduce })}
                   className="modal-video modal-video--embed"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
