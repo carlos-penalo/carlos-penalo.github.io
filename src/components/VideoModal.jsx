@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { driveFilePreviewUrl } from "@/lib/googleDrive.js";
 
 export function VideoModal({ open, playlist, activeIndex, onClose, onNavigate }) {
   const reduce = useReducedMotion();
@@ -9,6 +10,7 @@ export function VideoModal({ open, playlist, activeIndex, onClose, onNavigate })
   const dialogRef = useRef(null);
   const videoRef = useRef(null);
   const project = playlist[activeIndex];
+  const isDrive = Boolean(project?.googleDriveFileId);
 
   const cycle = useCallback(
     (delta) => {
@@ -57,8 +59,9 @@ export function VideoModal({ open, playlist, activeIndex, onClose, onNavigate })
   }, [open]);
 
   useEffect(() => {
+    if (isDrive) return undefined;
     const v = videoRef.current;
-    if (!open || !v) return;
+    if (!open || !v) return undefined;
     v.muted = false;
     const p = v.play();
     if (p && typeof p.catch === "function") p.catch(() => {});
@@ -70,7 +73,7 @@ export function VideoModal({ open, playlist, activeIndex, onClose, onNavigate })
         /* ignore */
       }
     };
-  }, [open, activeIndex, project?.id]);
+  }, [open, activeIndex, project?.id, isDrive]);
 
   if (typeof document === "undefined") return null;
 
@@ -118,16 +121,27 @@ export function VideoModal({ open, playlist, activeIndex, onClose, onNavigate })
             </div>
 
             <div className="modal-player">
-              <video
-                ref={videoRef}
-                key={project.id}
-                className="modal-video"
-                src={project.src}
-                poster={project.poster ?? undefined}
-                controls
-                playsInline
-                preload="metadata"
-              />
+              {isDrive ? (
+                <iframe
+                  key={project.id}
+                  title={project.title}
+                  src={driveFilePreviewUrl(project.googleDriveFileId)}
+                  className="modal-video modal-video--embed"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  ref={videoRef}
+                  key={project.id}
+                  className="modal-video"
+                  src={project.src}
+                  poster={project.poster ?? undefined}
+                  controls
+                  playsInline
+                  preload="metadata"
+                />
+              )}
             </div>
 
             {project.description ? <p className="modal-desc">{project.description}</p> : null}
@@ -223,6 +237,10 @@ export function VideoModal({ open, playlist, activeIndex, onClose, onNavigate })
               max-height: min(62vh, 640px);
               object-fit: contain;
               background: #000;
+            }
+            .modal-video--embed {
+              border: 0;
+              min-height: min(62vh, 560px);
             }
             .modal-desc {
               margin: 0;

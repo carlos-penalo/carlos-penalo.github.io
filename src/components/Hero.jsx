@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import { siteConfig } from "@/config/siteConfig.js";
+import { driveFilePreviewUrl } from "@/lib/googleDrive.js";
 
 function scrollToId(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -56,16 +57,27 @@ export function Hero({ heroVideoProject }) {
               <span className="hero-reel__label">Featured preview</span>
             </div>
             <div className="hero-reel__media">
-              <video
-                className="hero-reel__video"
-                src={heroVideoProject.src}
-                poster={heroVideoProject.poster ?? undefined}
-                muted
-                playsInline
-                loop
-                preload="metadata"
-                controls={false}
-              />
+              {heroVideoProject.googleDriveFileId ? (
+                <iframe
+                  title=""
+                  className="hero-reel__video hero-reel__embed"
+                  src={driveFilePreviewUrl(heroVideoProject.googleDriveFileId)}
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  className="hero-reel__video"
+                  src={heroVideoProject.src}
+                  poster={heroVideoProject.poster ?? undefined}
+                  muted
+                  playsInline
+                  loop
+                  preload="metadata"
+                  controls={false}
+                />
+              )}
               <div className="hero-reel__overlay" aria-hidden>
                 <Play size={28} />
               </div>
@@ -189,6 +201,10 @@ export function Hero({ heroVideoProject }) {
           width: 100%;
           height: 100%;
           object-fit: cover;
+        }
+        .hero-reel__embed {
+          border: 0;
+          pointer-events: none;
         }
         .hero-reel__overlay {
           position: absolute;

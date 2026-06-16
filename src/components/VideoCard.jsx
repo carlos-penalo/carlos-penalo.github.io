@@ -3,6 +3,7 @@ import { motion, useInView, useReducedMotion } from "framer-motion";
 import { Play } from "lucide-react";
 import { usePreviewVideo } from "@/context/PreviewVideoContext.jsx";
 import { useHoverCapable } from "@/hooks/useHoverCapable.js";
+import { driveFilePreviewUrl } from "@/lib/googleDrive.js";
 
 export function VideoCard({ project, onOpen, variant = "grid" }) {
   const reduce = useReducedMotion();
@@ -13,15 +14,21 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
   const hoverTimerRef = useRef(null);
   const [loaded, setLoaded] = useState(false);
   const inView = useInView(rootRef, { amount: 0.35, margin: "0px 0px -12% 0px" });
+  const isDrive = Boolean(project.googleDriveFileId);
 
   useEffect(() => {
+    if (isDrive) {
+      register(project.id, null);
+      return () => register(project.id, null);
+    }
     register(project.id, videoRef.current);
     return () => register(project.id, null);
-  }, [project.id, register]);
+  }, [project.id, register, isDrive]);
 
   useEffect(() => {
+    if (isDrive) return;
     if (!inView) pause(project.id);
-  }, [inView, pause, project.id]);
+  }, [inView, pause, project.id, isDrive]);
 
   const clearHoverTimer = () => {
     if (hoverTimerRef.current) {
@@ -31,7 +38,7 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
   };
 
   const onEnter = () => {
-    if (!hoverCapable) return;
+    if (isDrive || !hoverCapable) return;
     clearHoverTimer();
     hoverTimerRef.current = window.setTimeout(() => {
       playPreview(project.id);
@@ -40,12 +47,13 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
 
   const onLeave = () => {
     clearHoverTimer();
-    pause(project.id);
+    if (!isDrive) pause(project.id);
   };
 
   useEffect(() => () => clearHoverTimer(), []);
 
   const mediaAspect = variant === "featured" ? "21 / 9" : "16 / 9";
+  const embedSrc = isDrive ? driveFilePreviewUrl(project.googleDriveFileId) : "";
 
   return (
     <article ref={rootRef} className={`video-card ${variant === "featured" ? "video-card--featured" : ""}`}>
@@ -56,18 +64,30 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
         onMouseLeave={onLeave}
       >
         {!loaded && <div className="skeleton" aria-hidden />}
-        <video
-          ref={videoRef}
-          src={project.src}
-          poster={project.poster ?? undefined}
-          muted
-          playsInline
-          loop
-          preload="metadata"
-          loading="lazy"
-          className="video-card__video"
-          onLoadedMetadata={() => setLoaded(true)}
-        />
+        {isDrive ? (
+          <iframe
+            title=""
+            src={embedSrc}
+            loading="lazy"
+            className="video-card__embed"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            onLoad={() => setLoaded(true)}
+          />
+        ) : (
+          <video
+            ref={videoRef}
+            src={project.src}
+            poster={project.poster ?? undefined}
+            muted
+            playsInline
+            loop
+            preload="metadata"
+            loading="lazy"
+            className="video-card__video"
+            onLoadedMetadata={() => setLoaded(true)}
+          />
+        )}
         <div className="video-card__shine" aria-hidden />
         <div className="video-card__icons" aria-hidden>
           <span className="play-badge">
@@ -119,10 +139,17 @@ export function VideoCard({ project, onOpen, variant = "grid" }) {
         .video-card--featured .video-card__media {
           min-height: 220px;
         }
-        .video-card__video {
+        .video-card__video,
+        .video-card__embed {
           width: 100%;
           height: 100%;
+          min-height: 160px;
+          border: 0;
           object-fit: cover;
+        }
+        .video-card__embed {
+          object-fit: contain;
+          pointer-events: none;
         }
         .video-card__shine {
           position: absolute;
