@@ -4,6 +4,7 @@ import { ArrowRight, Star } from "lucide-react";
 import { siteConfig } from "@/config/siteConfig.js";
 import { driveFilePreviewUrl } from "@/lib/googleDrive.js";
 import { MagneticButton } from "@/components/MagneticButton.jsx";
+import { LoopPreviewVideo } from "@/components/LoopPreviewVideo.jsx";
 
 function scrollToId(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -144,16 +145,7 @@ export function Hero({ heroVideoProject }) {
                   <div className="absolute left-0 top-0 z-[2] h-16 w-16 rounded-br-[28px] border-b border-r border-white/10 bg-gradient-to-br from-accent/35 to-transparent" aria-hidden />
                   <div className="relative aspect-[4/5] w-full overflow-hidden bg-black">
                     {h.video ? (
-                      <video
-                        className="h-full w-full object-cover"
-                        src={h.video}
-                        muted
-                        playsInline
-                        loop
-                        preload="auto"
-                        controls={false}
-                        autoPlay={!reduce}
-                      />
+                      <LoopPreviewVideo className="h-full w-full object-cover" src={h.video} />
                     ) : heroVideoProject.googleDriveFileId ? (
                       <>
                         {heroVideoProject.poster ? (
@@ -177,16 +169,10 @@ export function Hero({ heroVideoProject }) {
                         />
                       </>
                     ) : (
-                      <video
+                      <LoopPreviewVideo
                         className="h-full w-full object-cover"
                         src={heroVideoProject.src}
                         poster={heroVideoProject.poster ?? undefined}
-                        muted
-                        playsInline
-                        loop
-                        preload="metadata"
-                        controls={false}
-                        autoPlay={!reduce}
                       />
                     )}
                     <div

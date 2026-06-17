@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Clock, Layers, TrendingUp } from "lucide-react";
 import { siteConfig } from "@/config/siteConfig.js";
+import { LoopPreviewVideo } from "@/components/LoopPreviewVideo.jsx";
 
 const icons = [TrendingUp, Layers, Clock];
 
@@ -25,15 +26,9 @@ export function WhyMe() {
             transition={{ duration: reduce ? 0 : 0.5 }}
             className="relative min-h-[280px] overflow-hidden rounded-[26px] border border-white/10 bg-card shadow-card lg:min-h-[420px]"
           >
-            <video
+            <LoopPreviewVideo
               className="absolute inset-0 h-full w-full object-cover"
               src="/previews/hero.mp4"
-              muted
-              playsInline
-              loop
-              preload="metadata"
-              controls={false}
-              autoPlay={!reduce}
               aria-hidden
             />
             <div

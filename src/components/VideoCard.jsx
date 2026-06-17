@@ -4,6 +4,7 @@ import { BadgeCheck } from "lucide-react";
 import { usePreviewVideo } from "@/context/PreviewVideoContext.jsx";
 import { useHoverCapable } from "@/hooks/useHoverCapable.js";
 import { driveFilePreviewUrl, driveThumbnailUrl } from "@/lib/googleDrive.js";
+import { LoopPreviewVideo } from "@/components/LoopPreviewVideo.jsx";
 
 function initialsFromTitle(title) {
   const parts = String(title || "")
@@ -23,7 +24,6 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
   const { register, pause, playPreview } = usePreviewVideo();
   const rootRef = useRef(null);
   const videoRef = useRef(null);
-  const loopRef = useRef(null);
   const hoverTimerRef = useRef(null);
   const [nativeReady, setNativeReady] = useState(false);
   const [thumbLoaded, setThumbLoaded] = useState(false);
@@ -123,23 +123,6 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
 
   useEffect(() => () => clearHoverTimer(), []);
 
-  /** Local loop preview: autoplay muted while in view, pause when off-screen (saves bandwidth). */
-  useEffect(() => {
-    if (!hasLoopPreview || reduce) return;
-    const v = loopRef.current;
-    if (!v) return;
-    if (inView) {
-      const p = v.play();
-      if (p && typeof p.catch === "function") p.catch(() => {});
-    } else {
-      try {
-        v.pause();
-      } catch {
-        /* ignore */
-      }
-    }
-  }, [hasLoopPreview, inView, reduce]);
-
   const driveShowSkeleton = isDrive && thumbSrc && !thumbLoaded && !thumbFailed;
   const driveIdleFallback = isDrive && thumbFailed && !driveIframeSrc;
 
@@ -171,16 +154,10 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
 
       <div className={`relative flex-1 overflow-hidden bg-black ${aspectClass}`}>
         {hasLoopPreview ? (
-          <video
-            ref={loopRef}
+          <LoopPreviewVideo
             src={previewSrc}
-            muted
-            playsInline
-            loop
             preload="metadata"
-            controls={false}
             className="absolute inset-0 z-[1] h-full w-full object-cover"
-            autoPlay={!reduce}
           />
         ) : isDrive ? (
           <>

@@ -3,6 +3,7 @@ import { motion, useMotionTemplate, useReducedMotion, useScroll, useTransform } 
 import { ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/config/siteConfig.js";
 import { BeforeAfter } from "@/components/BeforeAfter.jsx";
+import { LoopPreviewVideo } from "@/components/LoopPreviewVideo.jsx";
 
 function scrollToHash(hash) {
   const id = hash.replace("#", "");
@@ -16,31 +17,15 @@ const SERVICE_VIDEOS = {
 };
 
 function LoopVideo({ src, label }) {
-  const reduce = useReducedMotion();
   return (
     <div className="relative h-full min-h-[220px] overflow-hidden rounded-2xl border border-white/10 bg-black md:min-h-[280px]">
       {/* Blurred fill behind keeps the box full while the real frame shows uncropped on top. */}
-      <video
+      <LoopPreviewVideo
         className="absolute inset-0 h-full w-full scale-110 object-cover opacity-40 blur-2xl"
         src={src}
-        muted
-        playsInline
-        loop
-        preload="metadata"
-        controls={false}
-        autoPlay={!reduce}
         aria-hidden
       />
-      <video
-        className="absolute inset-0 h-full w-full object-contain"
-        src={src}
-        muted
-        playsInline
-        loop
-        preload="metadata"
-        controls={false}
-        autoPlay={!reduce}
-      />
+      <LoopPreviewVideo className="absolute inset-0 h-full w-full object-contain" src={src} />
       {label ? (
         <p className="absolute left-6 top-6 z-[1] text-xs font-semibold uppercase tracking-[0.2em] text-white/80 drop-shadow">
           {label}
@@ -114,7 +99,7 @@ function ServiceCard({ item, index, total, progress, reduce, onCta }) {
   const targetScale = isLast ? 1 : 1 - (total - 1 - index) * 0.04;
 
   const scale = useTransform(progress, [start, 1], [1, targetScale]);
-  const opacity = useTransform(progress, [start, 1], [1, isLast ? 1 : 0.82]);
+  const dim = useTransform(progress, [start, 1], [0, isLast ? 0 : 0.18]);
   const brightness = useTransform(progress, [start, 1], [1, isLast ? 1 : 0.78]);
   const y = useTransform(progress, [start, 1], [0, isLast ? 0 : -8]);
   const filter = useMotionTemplate`brightness(${brightness})`;
@@ -136,9 +121,14 @@ function ServiceCard({ item, index, total, progress, reduce, onCta }) {
     >
       <motion.article
         className={CARD_CLASS}
-        style={{ scale, opacity, filter, y, transformOrigin: "center top", willChange: "transform" }}
+        style={{ scale, filter, y, transformOrigin: "center top", willChange: "transform" }}
       >
         <ServiceCardInner item={item} index={index} onCta={onCta} />
+        <motion.div
+          className="pointer-events-none absolute inset-0 z-[1] rounded-[inherit] bg-black"
+          style={{ opacity: dim }}
+          aria-hidden
+        />
       </motion.article>
     </div>
   );
