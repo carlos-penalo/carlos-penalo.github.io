@@ -177,6 +177,9 @@ function normalizeManualVideo(raw) {
     typeof raw.poster === "string" && raw.poster.trim() ? raw.poster.trim() : null;
   const posterFromDrive = driveId ? driveThumbnailUrl(driveId, 1200) : null;
 
+  const previewSrc =
+    typeof raw.previewSrc === "string" && raw.previewSrc.trim() ? raw.previewSrc.trim() : null;
+
   return {
     id,
     title,
@@ -186,6 +189,7 @@ function normalizeManualVideo(raw) {
     src: directSrc ?? "",
     googleDriveFileId: driveId || null,
     poster: explicitPoster ?? posterFromDrive,
+    previewSrc,
     featured: Boolean(raw.featured),
     featuredOrder: typeof raw.featuredOrder === "number" ? raw.featuredOrder : null,
     order: typeof raw.order === "number" ? raw.order : 998,
@@ -214,6 +218,7 @@ function buildProjectEntry(rawPath, url) {
     src,
     googleDriveFileId: null,
     poster: override.poster ?? null,
+    previewSrc: typeof override.previewSrc === "string" ? override.previewSrc : null,
     featured: Boolean(override.featured),
     featuredOrder: typeof override.featuredOrder === "number" ? override.featuredOrder : null,
     order: typeof override.order === "number" ? override.order : 999,

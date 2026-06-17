@@ -23,6 +23,7 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
   const { register, pause, playPreview } = usePreviewVideo();
   const rootRef = useRef(null);
   const videoRef = useRef(null);
+  const loopRef = useRef(null);
   const hoverTimerRef = useRef(null);
   const [nativeReady, setNativeReady] = useState(false);
   const [thumbLoaded, setThumbLoaded] = useState(false);
@@ -33,12 +34,21 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
   const inView = useInView(rootRef, { amount: 0.22, margin: "0px 0px -8% 0px" });
   const isDrive = Boolean(project.googleDriveFileId);
 
+  /** Optional local looping clip shown as the always-on preview (click still opens the full video). */
+  const previewSrc =
+    typeof project.previewSrc === "string" && project.previewSrc.trim() ? project.previewSrc.trim() : "";
+  const hasLoopPreview = Boolean(previewSrc);
+
   const thumbSrc =
     (typeof project.poster === "string" && project.poster.trim()) ||
     (project.googleDriveFileId ? driveThumbnailUrl(project.googleDriveFileId, 1200) : "");
 
   const wantDriveEmbed =
-    isDrive && inView && !reduce && (variant === "featured" || !hoverCapable || pointerOver || focusWithin);
+    !hasLoopPreview &&
+    isDrive &&
+    inView &&
+    !reduce &&
+    (variant === "featured" || !hoverCapable || pointerOver || focusWithin);
 
   const driveIframeSrc = wantDriveEmbed
     ? driveFilePreviewUrl(project.googleDriveFileId, {
@@ -113,6 +123,23 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
 
   useEffect(() => () => clearHoverTimer(), []);
 
+  /** Local loop preview: autoplay muted while in view, pause when off-screen (saves bandwidth). */
+  useEffect(() => {
+    if (!hasLoopPreview || reduce) return;
+    const v = loopRef.current;
+    if (!v) return;
+    if (inView) {
+      const p = v.play();
+      if (p && typeof p.catch === "function") p.catch(() => {});
+    } else {
+      try {
+        v.pause();
+      } catch {
+        /* ignore */
+      }
+    }
+  }, [hasLoopPreview, inView, reduce]);
+
   const driveShowSkeleton = isDrive && thumbSrc && !thumbLoaded && !thumbFailed;
   const driveIdleFallback = isDrive && thumbFailed && !driveIframeSrc;
 
@@ -143,7 +170,19 @@ export function VideoCard({ project, onOpen, variant = "grid", footerCategoryOnl
       </div>
 
       <div className={`relative flex-1 overflow-hidden bg-black ${aspectClass}`}>
-        {isDrive ? (
+        {hasLoopPreview ? (
+          <video
+            ref={loopRef}
+            src={previewSrc}
+            muted
+            playsInline
+            loop
+            preload="metadata"
+            controls={false}
+            className="absolute inset-0 z-[1] h-full w-full object-cover"
+            autoPlay={!reduce}
+          />
+        ) : isDrive ? (
           <>
             {thumbSrc && !thumbFailed ? (
               <img

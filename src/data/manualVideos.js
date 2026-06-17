@@ -19,6 +19,8 @@ export const manualVideoProjects = [
     featured: true,
     featuredOrder: 2,
     order: 2,
+    // Local looping preview (click opens the full Drive video).
+    previewSrc: "/previews/Direct%20Meds%20-%20Trim.mp4",
   },
   {
     title: "FakeMoney Real Lambo",
@@ -27,6 +29,8 @@ export const manualVideoProjects = [
     featured: true,
     featuredOrder: 3,
     order: 3,
+    // Local looping preview (click opens the full Drive video).
+    previewSrc: "/previews/hero.mp4",
   },
   {
     title: "Insurance Leo",
@@ -125,6 +129,8 @@ export const manualVideoProjects = [
     featured: true,
     featuredOrder: 1,
     order: 30,
+    // Local looping preview (click opens the full Drive video).
+    previewSrc: "/previews/2%20-%20Trim.mp4",
   },
   {
     title: "Talking Head 2",

@@ -24,7 +24,7 @@ export function FeaturedWork({ projects, onOpenProject }) {
             </p>
           </div>
         ) : (
-          <div className="mt-12 grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
+          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 md:gap-8 lg:grid-cols-3">
             {featured.map((p, i) => (
               <motion.div
                 key={p.id}
@@ -33,7 +33,7 @@ export function FeaturedWork({ projects, onOpenProject }) {
                 whileInView={reduce ? false : { opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-10% 0px" }}
                 transition={{ duration: reduce ? 0 : 0.45, delay: reduce ? 0 : i * 0.05 }}
-                className={`min-w-0 ${i === 0 ? "lg:col-span-2" : ""}`}
+                className="flex min-w-0 flex-col"
               >
                 <FeaturedVideoCard project={p} onOpen={() => onOpenProject(p, featured)} />
               </motion.div>
