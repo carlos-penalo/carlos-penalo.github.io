@@ -1,4 +1,5 @@
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useMotionTemplate, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/config/siteConfig.js";
 import { BeforeAfter } from "@/components/BeforeAfter.jsx";
@@ -71,9 +72,86 @@ function ServiceVisual({ kind }) {
   );
 }
 
+/** Inner card markup — unchanged design/content; rendered inside the sticky wrapper. */
+function ServiceCardInner({ item, index, onCta }) {
+  return (
+    <>
+      <div className="pointer-events-none absolute right-8 top-8 h-2 w-2 rounded-full bg-accent/70 blur-[0.5px]" aria-hidden />
+      <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+        <div className={index % 2 === 1 ? "lg:order-2" : "lg:order-1"}>
+          <h3 className="font-medium tracking-tight text-fg text-2xl md:text-3xl">{item.title}</h3>
+          <p className="mt-4 max-w-xl text-base leading-relaxed text-muted md:text-lg">{item.body}</p>
+          <button
+            type="button"
+            className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.04] px-5 py-2.5 text-sm font-semibold text-fg transition duration-300 hover:border-accent/40 hover:bg-white/[0.07]"
+            onClick={onCta}
+          >
+            {item.cta}
+            <ArrowUpRight className="h-4 w-4 text-accent" aria-hidden />
+          </button>
+        </div>
+        <div
+          className={`min-h-[220px] transition duration-500 ease-out md:min-h-[280px] ${
+            index % 2 === 1 ? "lg:order-1" : "lg:order-2"
+          } group-hover:[&_.svc-media]:scale-[1.02]`}
+        >
+          <div className="svc-media h-full transition duration-500 ease-out">
+            <ServiceVisual kind={item.visual} />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+const CARD_CLASS =
+  "group relative overflow-hidden rounded-[28px] border border-white/10 bg-card p-6 shadow-card md:min-h-[min(100vw,460px)] md:p-10 lg:p-12";
+
+/** Sticky stacked card: scroll-synced scale / opacity / brightness / lift as the next card covers it. */
+function ServiceCard({ item, index, total, progress, reduce, onCta }) {
+  const start = index / total;
+  const isLast = index === total - 1;
+  const targetScale = isLast ? 1 : 1 - (total - 1 - index) * 0.04;
+
+  const scale = useTransform(progress, [start, 1], [1, targetScale]);
+  const opacity = useTransform(progress, [start, 1], [1, isLast ? 1 : 0.82]);
+  const brightness = useTransform(progress, [start, 1], [1, isLast ? 1 : 0.78]);
+  const y = useTransform(progress, [start, 1], [0, isLast ? 0 : -8]);
+  const filter = useMotionTemplate`brightness(${brightness})`;
+
+  if (reduce) {
+    return (
+      <div className="mb-8 last:mb-0">
+        <article className={CARD_CLASS}>
+          <ServiceCardInner item={item} index={index} onCta={onCta} />
+        </article>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="sticky mb-8 last:mb-0"
+      style={{ top: `calc(var(--stack-top) + ${index} * var(--stack-peek))`, zIndex: index }}
+    >
+      <motion.article
+        className={CARD_CLASS}
+        style={{ scale, opacity, filter, y, transformOrigin: "center top", willChange: "transform" }}
+      >
+        <ServiceCardInner item={item} index={index} onCta={onCta} />
+      </motion.article>
+    </div>
+  );
+}
+
 export function Services({ onPortfolioFilter }) {
   const reduce = useReducedMotion();
   const { services } = siteConfig;
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
 
   const handleCta = (item) => {
     if (item.portfolioFilter && typeof onPortfolioFilter === "function") {
@@ -91,41 +169,20 @@ export function Services({ onPortfolioFilter }) {
         <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-muted">{services.lead}</p>
       </div>
 
-      <div className="mx-auto mt-14 flex max-w-[1200px] flex-col gap-8 px-4 md:mt-20 md:px-6">
+      <div
+        ref={containerRef}
+        className="svc-stack mx-auto mt-14 max-w-[1200px] px-4 md:mt-20 md:px-6 [--stack-peek:12px] [--stack-top:88px] md:[--stack-peek:16px] md:[--stack-top:110px]"
+      >
         {services.items.map((item, i) => (
-          <motion.article
+          <ServiceCard
             key={item.title}
-            initial={reduce ? false : { opacity: 0, y: 22 }}
-            whileInView={reduce ? false : { opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: reduce ? 0 : 0.45, delay: reduce ? 0 : i * 0.06, ease: [0.22, 1, 0.36, 1] }}
-            className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-card p-6 shadow-card md:min-h-[min(100vw,460px)] md:p-10 lg:p-12"
-          >
-            <div className="pointer-events-none absolute right-8 top-8 h-2 w-2 rounded-full bg-accent/70 blur-[0.5px]" aria-hidden />
-            <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
-              <div className={i % 2 === 1 ? "lg:order-2" : "lg:order-1"}>
-                <h3 className="font-medium tracking-tight text-fg text-2xl md:text-3xl">{item.title}</h3>
-                <p className="mt-4 max-w-xl text-base leading-relaxed text-muted md:text-lg">{item.body}</p>
-                <button
-                  type="button"
-                  className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.04] px-5 py-2.5 text-sm font-semibold text-fg transition duration-300 hover:border-accent/40 hover:bg-white/[0.07]"
-                  onClick={() => handleCta(item)}
-                >
-                  {item.cta}
-                  <ArrowUpRight className="h-4 w-4 text-accent" aria-hidden />
-                </button>
-              </div>
-              <div
-                className={`min-h-[220px] transition duration-500 ease-out md:min-h-[280px] ${
-                  i % 2 === 1 ? "lg:order-1" : "lg:order-2"
-                } group-hover:[&_.svc-media]:scale-[1.02]`}
-              >
-                <div className="svc-media h-full transition duration-500 ease-out">
-                  <ServiceVisual kind={item.visual} />
-                </div>
-              </div>
-            </div>
-          </motion.article>
+            item={item}
+            index={i}
+            total={services.items.length}
+            progress={scrollYProgress}
+            reduce={reduce}
+            onCta={() => handleCta(item)}
+          />
         ))}
       </div>
     </section>

@@ -25,16 +25,27 @@ export function WhyMe() {
             transition={{ duration: reduce ? 0 : 0.5 }}
             className="relative min-h-[280px] overflow-hidden rounded-[26px] border border-white/10 bg-card shadow-card lg:min-h-[420px]"
           >
+            <video
+              className="absolute inset-0 h-full w-full object-cover"
+              src="/previews/hero.mp4"
+              muted
+              playsInline
+              loop
+              preload="metadata"
+              controls={false}
+              autoPlay={!reduce}
+              aria-hidden
+            />
             <div
-              className="absolute inset-0 opacity-80"
+              className="absolute inset-0"
               style={{
                 background:
-                  "radial-gradient(ellipse 90% 80% at 40% 20%, rgba(255,23,23,0.18), transparent 55%), linear-gradient(165deg, #0a0a0a, #050505)",
+                  "radial-gradient(ellipse 90% 80% at 40% 20%, rgba(255,23,23,0.18), transparent 55%), linear-gradient(165deg, rgba(8,8,8,0.55), rgba(5,5,5,0.78))",
               }}
               aria-hidden
             />
             <div
-              className="absolute inset-0 opacity-40"
+              className="absolute inset-0 opacity-30"
               style={{
                 backgroundImage:
                   "repeating-linear-gradient(-14deg, transparent, transparent 18px, rgba(255,255,255,0.03) 18px, rgba(255,255,255,0.03) 19px)",
@@ -42,7 +53,7 @@ export function WhyMe() {
               aria-hidden
             />
             <div className="absolute bottom-8 left-8 right-8 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" aria-hidden />
-            <p className="absolute left-8 top-8 text-xs font-semibold uppercase tracking-[0.2em] text-muted">Edit suite</p>
+            <p className="absolute left-8 top-8 text-xs font-semibold uppercase tracking-[0.2em] text-white/80 drop-shadow">Edit suite</p>
           </motion.div>
 
           <div className="flex flex-col gap-4">
