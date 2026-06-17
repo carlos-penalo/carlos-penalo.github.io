@@ -125,7 +125,7 @@ export function Hero({ heroVideoProject }) {
             </div>
           </motion.div>
 
-          {heroVideoProject && (
+          {(h.video || heroVideoProject) && (
             <motion.div
               initial={reduce ? false : { opacity: 0, y: 24 }}
               animate={reduce ? false : { opacity: 1, y: 0 }}
@@ -143,7 +143,18 @@ export function Hero({ heroVideoProject }) {
                 <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-card shadow-card ring-1 ring-white/[0.04]">
                   <div className="absolute left-0 top-0 z-[2] h-16 w-16 rounded-br-[28px] border-b border-r border-white/10 bg-gradient-to-br from-accent/35 to-transparent" aria-hidden />
                   <div className="relative aspect-[4/5] w-full overflow-hidden bg-black">
-                    {heroVideoProject.googleDriveFileId ? (
+                    {h.video ? (
+                      <video
+                        className="h-full w-full object-cover"
+                        src={h.video}
+                        muted
+                        playsInline
+                        loop
+                        preload="auto"
+                        controls={false}
+                        autoPlay={!reduce}
+                      />
+                    ) : heroVideoProject.googleDriveFileId ? (
                       <>
                         {heroVideoProject.poster ? (
                           <img
@@ -184,7 +195,7 @@ export function Hero({ heroVideoProject }) {
                     />
                   </div>
                   <p className="border-t border-white/10 px-5 py-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
-                    {heroVideoProject.category}
+                    {h.video ? h.videoCaption ?? "Featured reel" : heroVideoProject.category}
                   </p>
                 </div>
               </div>

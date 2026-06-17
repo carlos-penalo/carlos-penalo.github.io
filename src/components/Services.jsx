@@ -8,61 +8,54 @@ function scrollToHash(hash) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+const SERVICE_VIDEOS = {
+  motion: "/previews/motion-social-ads.mp4",
+  saas: "/previews/saas-explainer.mp4",
+  talk: "/previews/talking-head.mp4",
+};
+
+function LoopVideo({ src, label }) {
+  const reduce = useReducedMotion();
+  return (
+    <div className="relative h-full min-h-[220px] overflow-hidden rounded-2xl border border-white/10 bg-black md:min-h-[280px]">
+      <video
+        className="absolute inset-0 h-full w-full object-cover"
+        src={src}
+        muted
+        playsInline
+        loop
+        preload="metadata"
+        controls={false}
+        autoPlay={!reduce}
+      />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" aria-hidden />
+      {label ? (
+        <p className="absolute left-6 top-6 text-xs font-semibold uppercase tracking-[0.2em] text-white/80 drop-shadow">
+          {label}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 function ServiceVisual({ kind }) {
   if (kind === "compare") {
     return (
       <BeforeAfter
         className="h-full min-h-[220px] md:min-h-[280px]"
-        beforeSrc="/services/grade-before.png"
-        afterSrc="/services/grade-after.png"
+        beforeSrc="/services/grade-before-real.png"
+        afterSrc="/services/grade-after.jpeg"
       />
     );
   }
-  if (kind === "saas") {
-    return (
-      <div className="relative h-full min-h-[220px] overflow-hidden rounded-2xl border border-white/10 bg-card md:min-h-[280px]">
-        <img
-          src="/services/saas-ui.png"
-          alt="SaaS analytics dashboard UI"
-          className="absolute inset-0 h-full w-full object-cover object-left-top"
-          loading="lazy"
-          decoding="async"
-          draggable={false}
-        />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" aria-hidden />
-      </div>
-    );
-  }
-  if (kind === "talk") {
-    return (
-      <div className="relative h-full min-h-[220px] overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#120808] via-card to-canvas md:min-h-[280px]">
-        <div className="absolute inset-0 opacity-60" style={{ background: "radial-gradient(circle at 30% 20%, rgba(255,23,23,0.2), transparent 50%)" }} />
-        <div className="absolute bottom-0 left-1/2 h-[78%] w-[55%] -translate-x-1/2 rounded-t-2xl border border-white/10 bg-gradient-to-b from-white/10 to-white/[0.02]" />
-        <p className="absolute left-6 top-6 text-xs font-semibold uppercase tracking-[0.2em] text-muted">Talking head</p>
-      </div>
-    );
-  }
-  if (kind === "wave") {
-    return (
-      <div className="relative flex h-full min-h-[220px] items-end overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-card to-black md:min-h-[280px]">
-        <div className="absolute inset-x-0 bottom-0 flex h-1/2 items-end justify-around gap-1 px-6 pb-8 opacity-80">
-          {Array.from({ length: 32 }).map((_, i) => (
-            <span
-              key={i}
-              className="w-1 rounded-full bg-gradient-to-t from-accent/20 to-accent/80"
-              style={{ height: `${18 + ((i * 13) % 55)}%` }}
-            />
-          ))}
-        </div>
-        <p className="absolute left-6 top-6 text-xs font-semibold uppercase tracking-[0.2em] text-muted">Mix & delivery</p>
-      </div>
-    );
+  if (SERVICE_VIDEOS[kind]) {
+    const labels = { motion: "Paid social", saas: "SaaS explainer", talk: "Talking head" };
+    return <LoopVideo src={SERVICE_VIDEOS[kind]} label={labels[kind]} />;
   }
   return (
     <div className="relative h-full min-h-[220px] overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#140a0a] via-[#0b0b0b] to-black md:min-h-[280px]">
       <div className="absolute inset-0 opacity-70" style={{ background: "radial-gradient(circle at 70% 30%, rgba(255,23,23,0.25), transparent 55%)" }} />
       <div className="absolute inset-0 bg-[repeating-linear-gradient(-12deg,transparent,transparent_14px,rgba(255,255,255,0.03)_14px,rgba(255,255,255,0.03)_15px)]" />
-      <p className="absolute left-6 top-6 text-xs font-semibold uppercase tracking-[0.2em] text-muted">Paid social</p>
     </div>
   );
 }

@@ -39,6 +39,9 @@ export const siteConfig = {
     secondaryCta: "Get in touch",
     statValue: "3+",
     statLabel: "Years shipping edits for brands & creators",
+    /** Local looping reel (muted autoplay). Overrides the featured Drive embed. */
+    video: "/previews/hero.mp4",
+    videoCaption: "Recent client work",
   },
 
   /** Horizontal “services” strip (CreatorCut-style cards). */
